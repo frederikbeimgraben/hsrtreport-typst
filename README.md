@@ -1,5 +1,7 @@
 # HSRTReport
 
+[![Build](https://github.com/frederikbeimgraben/hsrtreport-typst/actions/workflows/continuous-release.yml/badge.svg)](https://github.com/frederikbeimgraben/hsrtreport-typst/actions/workflows/continuous-release.yml)
+
 Typst report template for academic work at Reutlingen University. It is the
 port of the [HSRTReport LaTeX class](https://github.com/frederikbeimgraben/HSRT-Report)
 and keeps the same layout.
