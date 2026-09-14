@@ -23,9 +23,9 @@
   Huge: 24.787pt,
 )
 
-// LaTeX sets \baselineskip to 1.2467 x font size and stretches it by 1.5. The
-// Typst leading is the rest of that after the ascender-to-descender span of DIN.
-#let line-stretch = 1.5
+// LaTeX sets \baselineskip to 1.2467 x font size. The Typst leading is the
+// rest of that after the ascender-to-descender span of DIN.
+#let line-stretch = 1.0
 #let body-span = 1.211
 #let baseline-skip(size, stretch: line-stretch) = size * 1.2467 * stretch
 #let leading-for(size, stretch: line-stretch) = baseline-skip(size, stretch: stretch) - size * body-span

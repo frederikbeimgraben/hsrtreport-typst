@@ -17,10 +17,10 @@
   // topic: "Thema-XXX",
   // show-word-count: true,
 
-  // Report variant: "meti", "mki" or "huc". It selects the default logo.
-  // Give `logos` to select other logos, for example
-  // logos: (("INF/Kombiniert", 0.9), "HSRT").
-  variant: "meti",
+  // Report variant: "inf", "hsrt", "stupa", "asta", "echo" or "makers". It
+  // selects the default logos. Give `logos` to select other logos, for
+  // example logos: ("INF", ("HSRT", 0.8)).
+  variant: "inf",
 
   // Watermark text. `none` prints no watermark.
   watermark: none,

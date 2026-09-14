@@ -274,6 +274,24 @@ Die Begriffe werden automatisch in das entsprechende Verzeichnis aufgenommen.
 Typst zeichnet Diagramme ohne weitere Pakete. Rechtecke, Linien, Kurven und
 Polygone stehen direkt zur Verfügung.
 
+#unnumbered(level: 3)[Logos]
+
+Das Template bringt die Logos der Hochschule und der Hochschulgruppen mit.
+`variant` wählt den Satz für Titelseite und Fußzeile, `logos` und
+`footer-logos` überschreiben ihn. Ein eigenes Logo übergibt man als Bytes,
+zum Beispiel `logos: (read("logo.svg", encoding: none),)`.
+
+#figure(
+  grid(
+    columns: (1fr, 1fr, 1fr),
+    column-gutter: 1em,
+    row-gutter: 1.2em,
+    align: center + horizon,
+    ..known-logos.keys().map(name => logo-image(name, 1.1cm)),
+  ),
+  caption: [Mitgelieferte Logos],
+) <fig:logos>
+
 #unnumbered(level: 3)[Hyperlinks]
 
 - Automatische Verlinkung von Querverweisen

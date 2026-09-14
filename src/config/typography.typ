@@ -3,8 +3,8 @@
 #import "fonts.typ": *
 #import "colors.typ": *
 
-#let typography(font-size: sizes.normal, lang: "de", body) = {
-  let leading = leading-for(font-size)
+#let typography(font-size: sizes.normal, lang: "de", line-stretch: 1.0, body) = {
+  let leading = leading-for(font-size, stretch: line-stretch)
 
   set text(
     font: body-font,
@@ -31,7 +31,11 @@
   show terms.item: it => par[#blender(weight: "bold", it.term)#h(0.75em)#it.description]
   show raw: set text(font: mono-font)
   show table: set par(leading: leading-for(font-size, stretch: 1.0), justify: false)
-  set table(stroke: 0.5pt + black, inset: (x: 6pt, y: 1.5pt))
+  // \arraystretch{1.5}: the row height is 1.5 times the single line height.
+  set table(
+    stroke: 0.5pt + black,
+    inset: (x: 6pt, y: baseline-skip(font-size, stretch: 1.5) / 2 - font-size * body-span / 2),
+  )
   show footnote.entry: set text(size: sizes.footnote)
   set footnote.entry(indent: 0.5em)
 

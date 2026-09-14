@@ -36,19 +36,20 @@
   data: (),
   logos: (),
   logos-scale: 1.0,
-  main-logo-scale: 1.0,
   margin: 2cm,
   credit: [Made with #sym.suit.heart in Typst],
   credit-url: "https://github.com/frederikbeimgraben/hsrtreport-typst",
   font-size: sizes.normal,
-) = page(header: none, footer: none, numbering: none, {
+  background: none,
+) = page(header: none, footer: none, numbering: none, background: background, {
   set par(leading: leading-for(font-size, stretch: 1.0), spacing: 0pt, justify: true)
 
+  // The logo row starts 2cm from the left edge and 1.5cm from the top edge.
   if logos.len() > 0 {
     place(
       top + left,
       dy: 1.5cm - margin,
-      title-logos(logos, scale: logos-scale, main-scale: main-logo-scale),
+      title-logos(logos, scale: logos-scale),
     )
   }
 
@@ -61,9 +62,17 @@
 
   v(4cm + 30pt)
 
+  // The title does not hyphenate. A wrapped line then keeps its alignment
+  // with the first line and with the rule.
   block(
     below: 5pt,
-    text(font: heading-font, size: sizes.Huge, weight: "bold", title),
+    text(
+      font: heading-font,
+      size: sizes.Huge,
+      weight: "bold",
+      hyphenate: false,
+      title,
+    ),
   )
   line(length: 100%, stroke: 0.5mm + rule-color)
 

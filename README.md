@@ -76,9 +76,10 @@ italic in such a set. The files here declare one family per typeface.
 | `topic` | `none` | Row "Thema" |
 | `abstract`, `keywords` | `none` | Abstract block on the title page |
 | `data`, `extra-data` | `auto`, `()` | Replace or extend the table rows |
-| `variant` | `"meti"` | Logo set: `"meti"`, `"mki"` or `"huc"` |
-| `logos` | `auto` | Logo names, for example `("HSRT", "INF/Simple")` |
-| `footer-logos` | `true` | Repeat the logos in the page footer |
+| `variant` | `"inf"` | Logo set: `inf`, `hsrt`, `stupa`, `asta`, `echo`, `makers` |
+| `logos` | `auto` | Title page logos, see below |
+| `footer-logos` | `auto` | Footer logos, `false` turns them off |
+| `logos-scale` | `1.0` | Scale of every logo |
 | `show-toc` | `true` | Print the table of contents |
 | `show-figure-list`, `show-table-list` | `false` | Print the list of figures or tables |
 | `show-listing-list`, `show-equation-list` | `false` | Print the list of listings or equations |
@@ -88,6 +89,7 @@ italic in such a set. The files here declare one family per typeface.
 | `watermark` | `none` | Watermark text |
 | `show-word-count` | `false` | Add the row "Wortanzahl" |
 | `chapter-pagebreak` | `false` | Start each chapter on a new page |
+| `line-stretch` | `1.0` | Line spacing, `1.5` gives the wide setting |
 | `paper`, `margin`, `font-size`, `lang` | A4, 2cm, 11pt, de | Page layout |
 
 ## Content
@@ -108,6 +110,20 @@ plural, the genitive and the dative of a term.
 ```typ
   bib: bibliography("main.bib", style: "ieee", title: none),
 ```
+
+**Logos.** The template carries the logos `HSRT`, `INF`, `INF-Simple`,
+`STUPA`, `ASTA`, `ECHO`, `MAKERS`, `MAKERS-RAlign` and `MAKERS-Icon`. The
+variant selects a set for the title page and a set for the footer. The MAKERS
+variant, for example, puts the right-aligned logo into the footer, so the icon
+faces the corner of the page. Override a set with a list:
+
+```typ
+  logos: ("MAKERS", ("HSRT", 0.8), read("logo.svg", encoding: none)),
+  footer-logos: ("MAKERS-Icon",),
+```
+
+A list item is a name, a `(name, scale)` pair, or the bytes of your own image
+file.
 
 **Info boxes.** `#info-box`, `#warning-box`, `#success-box`, `#important-box`,
 `#discussion-box` and `#custom-box(icon, color)`. A box can contain another
@@ -169,7 +185,8 @@ The template is a modified version of the ZHAWReport class by Martin Oswald
 (ZHAW). Your own document, written from `example/`, carries no condition from
 this repository.
 
-The fonts Blender and DIN and the logos of Reutlingen University are **not**
-covered by the licenses above. They belong to their owners. The corporate
-design of Reutlingen University states the terms for the logos. Use them only
-for work at Reutlingen University.
+The fonts Blender and DIN and the logos of Reutlingen University, of the
+student parliament and of its groups are **not** covered by the licenses
+above. They belong to their owners. The corporate design of Reutlingen
+University states the terms for the logos. Use them only for work at
+Reutlingen University.

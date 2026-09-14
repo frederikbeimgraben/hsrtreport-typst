@@ -4,9 +4,10 @@
 
 #let _heading-sizes = (sizes.LARGE, sizes.Large, sizes.large, sizes.large)
 
-// Space above and below a heading, as a factor of the body font size. The
-// values reproduce the KOMA beforeskip/afterskip of the LaTeX class, measured
-// against its output.
+// Space above and below a heading, as a factor of the body font size,
+// measured against the output of the LaTeX class at line stretch 1.5. Each gap
+// holds one baseline skip, so a different line stretch shifts every value by
+// the same amount.
 #let _heading-space = (
   (above: 2.645, below: 1.722),
   (above: 3.967, below: 1.722),
@@ -14,7 +15,17 @@
   (above: 1.766, below: 1.550),
 )
 
-#let sections(chapter-pagebreak: false, font-size: sizes.normal, body) = {
+#let sections(
+  chapter-pagebreak: false,
+  font-size: sizes.normal,
+  line-stretch: line-stretch,
+  body,
+) = {
+  let shift = (
+    baseline-skip(font-size, stretch: 1.5)
+      - baseline-skip(font-size, stretch: line-stretch)
+  )
+
   set heading(numbering: "1.1")
 
   show heading: set text(font: heading-font, weight: "bold")
@@ -22,7 +33,12 @@
     let level = calc.min(it.level, 4)
     let space = _heading-space.at(level - 1)
     set text(size: _heading-sizes.at(level - 1))
-    set block(above: font-size * space.above, below: font-size * space.below)
+    // `sticky` keeps a heading with the text below it, as \Smartsection does.
+    set block(
+      above: font-size * space.above - shift,
+      below: font-size * space.below - shift,
+      sticky: true,
+    )
     it
   }
 

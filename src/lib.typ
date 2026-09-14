@@ -8,8 +8,8 @@
 #import "config/colors.typ": *
 #import "config/typography.typ": typography, compact-list
 #import "config/sections.typ": sections, subfigure, unnumbered
-#import "config/pagesetup.typ": page-setup
-#import "modules/logos.typ": variant-logos
+#import "config/pagesetup.typ": background as page-background, footer as page-footer, numbered-body, page-setup
+#import "modules/logos.typ": footer-logo-names, known-logos, logo-image, title-logo-names, variant-logos
 #import "modules/listings.typ": listing, listings
 #import "modules/icons.typ"
 #import "modules/infoboxes.typ": *
@@ -104,9 +104,9 @@
   normalized
 }
 
-#let _normalize-logos(logos, variant) = {
-  if logos == auto { return variant-logos.at(variant, default: ()) }
-  if type(logos) == str { return (logos,) }
+#let _normalize-logos(logos, names) = {
+  if logos == auto { return names }
+  if type(logos) in (str, bytes, dictionary) { return (logos,) }
   logos
 }
 
@@ -130,11 +130,10 @@
   labels: default-labels,
   show-word-count: false,
   // Logos
-  variant: "meti",
+  variant: "inf",
   logos: auto,
+  footer-logos: auto,
   logos-scale: 1.0,
-  main-logo-scale: 1.0,
-  footer-logos: true,
   // Front matter and back matter
   show-toc: true,
   show-figure-list: false,
@@ -147,6 +146,7 @@
   acronyms: (:),
   bib: none,
   // Layout
+  line-stretch: 1.0,
   watermark: none,
   chapter-pagebreak: false,
   paper: "a4",
@@ -157,7 +157,14 @@
   credit-url: "https://github.com/frederikbeimgraben/hsrtreport-typst",
   body,
 ) = {
-  let logos = _normalize-logos(logos, variant)
+  let logos = _normalize-logos(logos, title-logo-names(variant))
+  let footer-logos = if footer-logos == false {
+    ()
+  } else if footer-logos in (auto, true) {
+    _normalize-logos(auto, footer-logo-names(variant))
+  } else {
+    _normalize-logos(footer-logos, ())
+  }
   let terms = _normalize-terms(terms)
   let acronyms = _normalize-acronyms(acronyms)
   let labels = default-labels + labels
@@ -195,8 +202,12 @@
     date: if type(created-on) == datetime { created-on } else { auto },
   )
 
-  show: typography.with(font-size: font-size, lang: lang)
-  show: sections.with(chapter-pagebreak: chapter-pagebreak, font-size: font-size)
+  show: typography.with(font-size: font-size, lang: lang, line-stretch: line-stretch)
+  show: sections.with(
+    chapter-pagebreak: chapter-pagebreak,
+    font-size: font-size,
+    line-stretch: line-stretch,
+  )
   show: listings
   show: page-setup.with(
     title: title,
@@ -204,11 +215,10 @@
     paper: paper,
     paper-width: paper-width,
     margin: margin,
-    logos: logos,
-    show-footer-logos: footer-logos,
+    logos: footer-logos,
     logos-scale: logos-scale,
-    main-logo-scale: main-logo-scale,
     watermark: watermark,
+    page-numbering: "i",
   )
 
   words-state.update(count-words(body))
@@ -226,10 +236,14 @@
     data: data + extra-data,
     logos: logos,
     logos-scale: logos-scale,
-    main-logo-scale: main-logo-scale,
     margin: margin,
     credit-url: credit-url,
     font-size: font-size,
+    // The title page shows the skyline and the watermark, but no footer logos.
+    background: page-background(
+      paper-width: paper-width,
+      watermark: watermark,
+    ),
   )
 
   if show-toc { toc() }
@@ -240,6 +254,8 @@
 
   pagebreak(weak: true)
   counter(page).update(1)
+  numbered-body.update(true)
+  set page(footer: page-footer(author: author, numbering: "1"))
 
   body
 

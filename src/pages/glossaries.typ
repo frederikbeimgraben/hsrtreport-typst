@@ -6,7 +6,9 @@
 #let _table(entry-name, description-name, page-name, rows) = table(
   columns: (3fr, 5.8fr, 1.2fr),
   stroke: (x, y) => if y == 0 { (bottom: 0.6pt + black) } else { none },
-  inset: (x: 0pt, y: 5pt),
+  // The left edge of a column stays flush with the text margin, so the
+  // padding sits on the right. \tabcolsep does the same in the LaTeX class.
+  inset: (left: 0pt, right: 12pt, y: 5pt),
   align: (left + top, left + top, left + top),
   table.header(
     strong(entry-name),

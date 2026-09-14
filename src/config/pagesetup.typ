@@ -5,9 +5,13 @@
 #import "../modules/logos.typ" as logos-module
 #import "../modules/watermark.typ": watermark-layer
 
-// The running head and the page number follow the chapter that is open on the
-// page, the way the chapter counter does in the LaTeX class: the front matter
-// and the back matter have no numbered chapter, so both stay empty there.
+// True from the first chapter of the body onward. The page number in the
+// footer gets the "von M" suffix from there, also in the back matter.
+#let numbered-body = state("hsrt-numbered-body", false)
+
+// The running head names the chapter that is open on the page. The front
+// matter and the back matter have no numbered chapter, so it stays empty
+// there, as \ifHSRTBackMatter does in the LaTeX class.
 #let _active-chapter() = {
   let page-number = here().page()
   let chapters = query(heading.where(level: 1))
@@ -21,11 +25,6 @@
   if chapter == none or chapter.numbering == none { return none }
   let number = counter(heading).at(chapter.location()).at(0, default: 0)
   [#number~#sym.dash.en~#chapter.body]
-}
-
-#let _in-main-matter() = {
-  let chapter = _active-chapter()
-  chapter != none and chapter.numbering != none
 }
 
 #let _head-foot(body) = text(
@@ -44,13 +43,17 @@
   ))
 }
 
-#let footer(author: none) = context {
+#let footer(author: none, numbering: "1") = context {
+  let page-number = counter(page).get().at(0, default: 0)
+  let total = counter(page).final().at(0, default: 0)
   _head-foot(grid(
     columns: (1fr, auto, 1fr),
     align: (left, center, right),
     author,
-    if _in-main-matter() {
-      [Seite~#counter(page).get().at(0, default: 0)~von~#counter(page).final().at(0, default: 0)]
+    if numbered-body.get() {
+      [Seite~#std.numbering(numbering, page-number)~von~#std.numbering(numbering, total)]
+    } else {
+      [Seite~#std.numbering(numbering, page-number)]
     },
     [],
   ))
@@ -59,20 +62,17 @@
 #let background(
   paper-width: 210mm,
   logos: (),
-  show-footer-logos: false,
   logos-scale: 1.0,
-  main-logo-scale: 1.0,
   watermark: none,
-  margin: 2cm,
 ) = {
   watermark-layer(watermark)
   logos-module.skyline(paper-width)
-  if show-footer-logos and logos.len() > 0 {
+  if logos.len() > 0 {
     place(
       bottom + right,
-      dx: -margin,
-      dy: -1.5em,
-      logos-module.footer-logos(logos, scale: logos-scale, main-scale: main-logo-scale),
+      dx: -2.3cm,
+      dy: -1.5em - 2pt,
+      logos-module.footer-logos(logos, scale: logos-scale),
     )
   }
 }
@@ -84,28 +84,24 @@
   paper-width: 210mm,
   margin: 2cm,
   logos: (),
-  show-footer-logos: false,
   logos-scale: 1.0,
-  main-logo-scale: 1.0,
   watermark: none,
+  page-numbering: "1",
   body,
 ) = {
   set page(
     paper: paper,
     margin: margin,
     header-ascent: 21.7pt,
-    footer-descent: 23.3pt,
+    footer-descent: 8.3pt,
     numbering: none,
     header: header(title: title),
-    footer: footer(author: author),
+    footer: footer(author: author, numbering: page-numbering),
     background: background(
       paper-width: paper-width,
       logos: logos,
-      show-footer-logos: show-footer-logos,
       logos-scale: logos-scale,
-      main-logo-scale: main-logo-scale,
       watermark: watermark,
-      margin: margin,
     ),
   )
   body
