@@ -1,0 +1,25 @@
+{
+  "tinymist.fontPaths": ["hsrtreport/assets/fonts"],
+  "tinymist.systemFonts": true,
+  "tinymist.projectResolution": "lockDatabase",
+  "tinymist.outputPath": "$root/build/$name",
+  "tinymist.exportPdf": "onSave",
+  "tinymist.formatterMode": "typstyle",
+
+  "files.associations": {
+    "*.typ": "typst"
+  },
+
+  "[typst]": {
+    "editor.wordWrap": "on",
+    "editor.rulers": [80],
+    "editor.tabSize": 2
+  },
+
+  "cSpell.language": "de,en",
+  "cSpell.enableFiletypes": ["typst"],
+
+  "search.exclude": {
+    "build/**": true
+  }
+}

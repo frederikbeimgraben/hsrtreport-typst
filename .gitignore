@@ -1,0 +1,5 @@
+build/
+*.pdf
+!hsrtreport/assets/**/*.pdf
+.probe/
+result

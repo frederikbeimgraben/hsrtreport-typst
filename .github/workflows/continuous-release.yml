@@ -1,0 +1,96 @@
+name: Continuous Build and Latest Release
+
+on:
+  push:
+    branches:
+      - main
+    tags-ignore:
+      - "v*.*.*"
+      - "release-*"
+  pull_request:
+    branches:
+      - main
+
+env:
+  TYPST_VERSION: "0.15.1"
+
+jobs:
+  build-and-update-latest:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      checks: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Install Typst
+        uses: ./.github/actions/install-typst
+        with:
+          version: ${{ env.TYPST_VERSION }}
+
+      - name: Get build information
+        id: build_info
+        run: |
+          echo "DATE=$(date +'%Y-%m-%d %H:%M:%S UTC')" >> "$GITHUB_OUTPUT"
+          echo "SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-8)" >> "$GITHUB_OUTPUT"
+          echo "BRANCH=$(echo $GITHUB_REF | sed 's|refs/heads/||')" >> "$GITHUB_OUTPUT"
+          echo "COMMIT_MSG=$(git log -1 --pretty=%B | head -1)" >> "$GITHUB_OUTPUT"
+          echo "AUTHOR=$(git log -1 --pretty=%an)" >> "$GITHUB_OUTPUT"
+
+      - name: Build document
+        run: make build
+
+      - name: Verify PDF creation
+        run: |
+          if [ ! -f build/main.pdf ]; then
+            echo "::error::PDF was not created - build failed"
+            exit 1
+          fi
+          cp build/main.pdf Report_Latest.pdf
+          ls -lh Report_Latest.pdf
+
+      - name: Generate release notes
+        run: |
+          cat << 'EOF' > release_notes.md
+          ## 🔄 Latest Development Build
+
+          **Build Date:** ${{ steps.build_info.outputs.DATE }}
+          **Commit:** [`${{ steps.build_info.outputs.SHORT_SHA }}`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+          **Branch:** `${{ steps.build_info.outputs.BRANCH }}`
+          **Author:** ${{ steps.build_info.outputs.AUTHOR }}
+
+          ### 📝 Last Commit Message
+          ```
+          ${{ steps.build_info.outputs.COMMIT_MSG }}
+          ```
+
+          ### 🔧 Build System
+          - **Engine:** Typst ${{ env.TYPST_VERSION }}
+          - **Fonts:** bundled with the template
+
+          ### 📦 Download Files
+          - `Report_Latest.pdf` - the latest compiled document
+          EOF
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: document
+          path: Report_Latest.pdf
+
+      - name: Create or update the Latest release
+        if: github.event_name == 'push'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: "🔄 Latest Development Build"
+          body_path: release_notes.md
+          files: Report_Latest.pdf
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

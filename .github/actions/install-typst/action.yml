@@ -1,0 +1,21 @@
+name: Install Typst
+description: Install a pinned Typst release into the runner PATH.
+
+inputs:
+  version:
+    description: Typst version, for example 0.15.1
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        set -euo pipefail
+        archive="typst-x86_64-unknown-linux-musl"
+        url="https://github.com/typst/typst/releases/download/v${{ inputs.version }}/$archive.tar.xz"
+        curl --proto '=https' --tlsv1.2 -fsSL "$url" -o typst.tar.xz
+        tar -xJf typst.tar.xz
+        install -Dm755 "$archive/typst" "$HOME/.local/bin/typst"
+        rm -rf typst.tar.xz "$archive"
+        echo "$HOME/.local/bin" >> "$GITHUB_PATH"
