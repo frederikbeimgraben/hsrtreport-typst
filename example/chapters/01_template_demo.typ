@@ -1,6 +1,6 @@
 // Demonstration of the template features.
 
-#import "../../hsrtreport/lib.typ": *
+#import "@preview/hsrtreport:1.0.0": *
 
 = Template-Features Demonstration <chap:template_demo>
 
@@ -182,7 +182,7 @@ for i in range(10):
 
 #listing(caption: [Typst-Beispiel: Dokumentstruktur])[
 ```typst
-#import "../hsrtreport/lib.typ": *
+#import "@preview/hsrtreport:1.0.0": *
 
 #show: hsrtreport.with(
   title: [Überschrift],

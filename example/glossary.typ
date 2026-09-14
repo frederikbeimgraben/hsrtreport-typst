@@ -1,8 +1,9 @@
 // Glossary and acronym definitions.
 //
-// Use the entries in the text with #gls("key"), #glspl("key"),
-// #glsgen("key") or #acrshort("key").
+// Use an entry in the text with #gls("key"), #glspl("key"), #glsgen("key") or
+// #acrshort("key").
 
+// Short form: "key": [description]. The long form adds the German cases.
 #let terms = (
   "Textkörper": (
     name: "Textkörper",
@@ -16,9 +17,10 @@
   ),
 )
 
+// Short form: "key": "long form". The long form adds a differing short form.
 #let acronyms = (
   "Abb": (short: "Abb.", long: "Abbildung"),
   "Tab": (short: "Tab.", long: "Tabelle"),
-  "MPG": (short: "MPG", long: "Medizinproduktegesetz"),
-  "MS": (short: "MS", long: "Microsoft®"),
+  "MPG": "Medizinproduktegesetz",
+  "MS": "Microsoft®",
 )

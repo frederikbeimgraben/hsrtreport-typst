@@ -1,5 +1,5 @@
 {
-  "tinymist.fontPaths": ["hsrtreport/assets/fonts"],
+  "tinymist.fontPaths": ["src/assets/fonts"],
   "tinymist.systemFonts": true,
   "tinymist.projectResolution": "lockDatabase",
   "tinymist.outputPath": "$root/build/$name",

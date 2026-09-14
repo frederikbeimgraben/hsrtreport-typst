@@ -4,6 +4,8 @@
 #import "../config/colors.typ": *
 #import "../modules/logos.typ": title-logos
 
+// One row of the title page table. A length in the row list adds vertical
+// space instead of a row.
 #let data-line(label, body) = (label, body)
 
 #let _data-table(data, label-width: 30mm) = {
@@ -37,7 +39,7 @@
   main-logo-scale: 1.0,
   margin: 2cm,
   credit: [Made with #sym.suit.heart in Typst],
-  credit-url: "https://github.com/frederikbeimgraben/HSRT-Report",
+  credit-url: "https://github.com/frederikbeimgraben/hsrtreport-typst",
   font-size: sizes.normal,
 ) = page(header: none, footer: none, numbering: none, {
   set par(leading: leading-for(font-size, stretch: 1.0), spacing: 0pt, justify: true)
@@ -65,16 +67,21 @@
   )
   line(length: 100%, stroke: 0.5mm + rule-color)
 
-  block(
-    above: font-size * 2 + 63pt,
-    below: 1.8pt,
-    text(font: heading-font, size: sizes.Large, weight: "bold")[Abstract],
-  )
-  abstract
-  v(1em)
-  strong[Keywords]
-  linebreak()
-  keywords
+  if abstract != none {
+    block(
+      above: font-size * 2 + 63pt,
+      below: 1.8pt,
+      text(font: heading-font, size: sizes.Large, weight: "bold")[Abstract],
+    )
+    abstract
+  }
+
+  if keywords != none {
+    v(1em)
+    strong[Keywords]
+    linebreak()
+    keywords
+  }
 
   v(1fr)
   _data-table(data)

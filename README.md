@@ -1,327 +1,149 @@
-# HSRTReport - Typst Template
+# HSRTReport
 
-A report template for academic work at Reutlingen University (Hochschule
-Reutlingen). This is the Typst port of the
-[HSRTReport LaTeX class](https://github.com/frederikbeimgraben/HSRT-Report).
+Typst report template for academic work at Reutlingen University. It is the
+port of the [HSRTReport LaTeX class](https://github.com/frederikbeimgraben/HSRT-Report)
+and keeps the same layout.
 
-The template keeps the layout of the LaTeX class: the same title page, the same
-running head and footer, the same fonts, the same logos and the same skyline
-graphic. It needs no LaTeX installation and no package downloads.
+## Use the template
 
-## Contents
+One import and one show rule make a complete document:
 
-- [Prerequisites](#prerequisites)
-- [Project structure](#project-structure)
-- [Usage](#usage)
-- [Template options](#template-options)
-- [Features](#features)
-- [Building the document](#building-the-document)
-- [Use as a Typst package](#use-as-a-typst-package)
-- [Fonts](#fonts)
-- [Differences from the LaTeX template](#differences-from-the-latex-template)
-- [License](#license)
+```typ
+#import "@preview/hsrtreport:1.0.0": *
 
-## Prerequisites
+#show: hsrtreport.with(
+  title: [Titel der Arbeit],
+  author: "Hans Maria Muster",
+  email: "hans-maria.muster@student.hs-reutlingen.de",
+  semester-count: 5,
+  submitted-on: "01.02.2026",
+  course: "Medizinisch Technische Informatik B.Sc.",
+  module: ("METI1.2", "Mustermodul"),
+  supervisor: "Prof. Dr. Max Mustermann",
+  semester: "Wintersemester 2025/2026",
+  abstract: [Ziel, Methode und Ergebnis der Arbeit.],
+  keywords: "Seminararbeit, Studium",
+)
 
-You need one of these:
+= Einleitung
+Text des Kapitels.
+```
 
-- **Nix** (recommended). All commands run through `nix run` or `nix develop`.
-  You install nothing else.
-- **Typst 0.15 or later**. Install it from
-  [typst.app](https://github.com/typst/typst/releases) or from your package
-  manager.
+Every field is optional. A field that you leave out drops its row from the
+title page.
 
-The template uses no Typst packages from the internet. The fonts and the images
-are part of the repository, so an offline build is possible.
-
-## Project structure
+To start from the example document instead, run:
 
 ```sh
-hsrtreport-typst/
-├── hsrtreport/             # The template ("document class")
-│   ├── lib.typ             # Entry point, exports the template function
-│   ├── config/             # Fonts, colors, typography, sections, page setup
-│   ├── modules/            # Logos, icons, info boxes, listings, glossary
-│   ├── pages/              # Title page, table of contents, glossary
-│   └── assets/             # Fonts and images
-│
-├── src/                    # The example document, shows all features
-│   ├── main.typ            # Entry point of the document
-│   ├── metadata.typ        # Title page data, logos and options
-│   ├── glossary.typ        # Glossary and acronym definitions
-│   ├── main.bib            # Bibliography
-│   └── chapters/           # Your chapters
-│
-├── template/               # Starter that `typst init` copies
-├── thumbnail.png           # First page, for the package listing
-├── tools/patch-fonts.py    # Normalizes the name tables of the fonts
-├── flake.nix               # Nix development shell and document build
-├── Makefile                # Build directives
-└── typst.toml              # Typst package manifest
+typst init @preview/hsrtreport:1.0.0 my-report
 ```
 
-## Usage
+## Install the fonts
 
-### 1. Set the metadata
+The template uses the fonts Blender and DIN. Typst does not load fonts from a
+package, so you must install them one time:
 
-Open `src/metadata.typ`. It holds all settings of the document: the title, the
-author, the abstract, the keywords, the logos and the rows of the title page
-table. Each entry has a comment that explains it.
-
-### 2. Write your chapters
-
-Put one file per chapter into `src/chapters/`. Add each file to `src/main.typ`:
-
-```typ
-#include "chapters/01_introduction.typ"
-#include "chapters/02_method.typ"
+```sh
+nix run github:frederikbeimgraben/hsrtreport-typst#install-fonts
 ```
 
-Every chapter file starts with an import of the template:
+The command copies the fonts into `~/.local/share/fonts`. Without Nix, copy
+the files from `src/assets/fonts/` there yourself. You can also give the
+directory to Typst with `--font-path`.
 
-```typ
-#import "../../hsrtreport/lib.typ": *
-
-= Einleitung <chap:introduction>
-
-Text of the chapter.
-
-== Ein Abschnitt <sec:section>
-```
-
-A `=` heading is a chapter, `==` is a section and `===` is a subsection.
-
-### 3. Add literature
-
-Put your BibTeX entries into `src/main.bib` and cite them with `@key`. The
-bibliography is passed to the template in `src/main.typ`:
-
-```typ
-bib: bibliography("main.bib", style: "ieee", title: none),
-```
-
-Keep `title: none`. The template prints the heading "Literaturverzeichnis"
-itself.
-
-### 4. Define glossary entries
-
-Open `src/glossary.typ` and add terms and acronyms:
-
-```typ
-#let terms = (
-  "Textkörper": (
-    name: "Textkörper",
-    description: [Bereich der Arbeit, der die Ausarbeitung enthält.],
-    genitive: "Textkörpers",
-    plural: "Textkörper",
-  ),
-)
-
-#let acronyms = (
-  "MPG": (short: "MPG", long: "Medizinproduktegesetz"),
-)
-```
-
-Use an entry in the text with `#gls("MPG")`. The first use of an acronym prints
-the long form and the short form. Each later use prints the short form only.
-
-## Template options
-
-Give the options to `hsrtreport.with(...)` in `src/main.typ`, or put them into
-`settings` in `src/metadata.typ`.
+## Options
 
 | Option | Default | Function |
 | --- | --- | --- |
-| `title` | — | Title on the title page and in the PDF metadata |
-| `author` | `""` | Author, also shown in the page footer |
-| `created-on` | `none` | Date of creation for the PDF metadata |
-| `abstract` | `none` | Abstract on the title page |
-| `keywords` | `none` | Keywords, separated by commas |
-| `module-name` | `none` | Module name |
-| `data` | `()` | Rows of the title page table |
-| `variant` | `"meti"` | Report variant: `"meti"`, `"mki"` or `"huc"` |
-| `logos` | `auto` | Logos as `(name, scale)` pairs; `auto` takes the logo of the variant |
-| `logos-scale` | `1.0` | Scale of all logos |
-| `footer-logos` | `false` | Repeat the logos in the page footer |
+| `title`, `author`, `email` | — | Title page and PDF metadata |
+| `semester-count`, `submitted-on` | `none` | Rows of the title page table |
+| `course`, `module`, `supervisor`, `semester` | `none` | Rows of the title page table |
+| `topic` | `none` | Row "Thema" |
+| `abstract`, `keywords` | `none` | Abstract block on the title page |
+| `data`, `extra-data` | `auto`, `()` | Replace or extend the table rows |
+| `variant` | `"meti"` | Logo set: `"meti"`, `"mki"` or `"huc"` |
+| `logos` | `auto` | Logo names, for example `("HSRT", "INF/Simple")` |
+| `footer-logos` | `true` | Repeat the logos in the page footer |
 | `show-toc` | `true` | Print the table of contents |
-| `show-figure-list` | `false` | Print the list of figures |
-| `show-table-list` | `false` | Print the list of tables |
-| `show-listing-list` | `false` | Print the list of listings |
-| `show-equation-list` | `false` | Print the list of equations |
-| `show-glossary` | `false` | Print the glossary |
-| `show-acronyms` | `false` | Print the list of abbreviations |
-| `terms` | `(:)` | Glossary entries |
-| `acronyms` | `(:)` | Acronym entries |
+| `show-figure-list`, `show-table-list` | `false` | Print the list of figures or tables |
+| `show-listing-list`, `show-equation-list` | `false` | Print the list of listings or equations |
+| `terms`, `acronyms` | `(:)` | Glossary entries |
+| `show-glossary`, `show-acronyms` | `auto` | Print the lists if entries exist |
 | `bib` | `none` | A `bibliography(...)` element |
 | `watermark` | `none` | Watermark text |
+| `show-word-count` | `false` | Add the row "Wortanzahl" |
 | `chapter-pagebreak` | `false` | Start each chapter on a new page |
-| `paper` | `"a4"` | Paper format |
-| `margin` | `2cm` | Page margin |
-| `font-size` | `10.909pt` | Base font size (11pt in LaTeX units) |
-| `lang` | `"de"` | Document language |
+| `paper`, `margin`, `font-size`, `lang` | A4, 2cm, 11pt, de | Page layout |
 
-## Features
+## Content
 
-### Info boxes
+**Glossary.** Give the entries to the template. The first use of an acronym
+prints the long form. Each later use prints the short form.
 
 ```typ
-#info-box[Text of the box.]
-#warning-box[A warning.]
-#success-box[A result.]
-#important-box[A note.]
-#discussion-box[A discussion.]
-#custom-box(icons.check-circle, purple)[Your own box.]
+  terms: ("Textkörper": [Bereich der Arbeit, der die Ausarbeitung enthält.]),
+  acronyms: ("MPG": "Medizinproduktegesetz"),
 ```
 
-Boxes can contain other boxes. Each level gets a stronger background tint.
+Write `#gls("MPG")` in the text. `#glspl`, `#glsgen` and `#glsdat` print the
+plural, the genitive and the dative of a term.
 
-The voting box prints a result of a vote:
+**Bibliography.** Keep `title: none`. The template prints the heading itself.
 
 ```typ
-#voting-results(12, 3, 2)[Antrag auf Anschaffung eines Templates.]
+  bib: bibliography("main.bib", style: "ieee", title: none),
 ```
 
-### Code listings
+**Info boxes.** `#info-box`, `#warning-box`, `#success-box`, `#important-box`,
+`#discussion-box` and `#custom-box(icon, color)`. A box can contain another
+box. `#voting-results(12, 3, 2)[Antrag]` prints the result of a vote.
 
-A code block gets a frame and line numbers. `listing` adds a caption and makes
-the block referenceable:
+**Code.** A code block gets a frame and line numbers. `#listing(caption: [...])`
+adds a caption and a number.
 
-````typ
-#listing(caption: [Fakultätsfunktion])[
-```python
-def factorial(n):
-    return 1 if n <= 1 else n * factorial(n - 1)
-```
-] <lst:factorial>
-````
+**Figures.** Figures and tables count per chapter. `#subfigure` places figures
+side by side and labels them (a), (b).
 
-### Figures and tables
-
-Figures and tables are numbered per chapter, for example "Abbildung 2.1". Use
-`subfigure` for figures side by side:
-
-```typ
-#figure(
-  grid(columns: (1fr, 1fr), column-gutter: 1em,
-    subfigure(image("a.png"), caption: [First]),
-    subfigure(image("b.png"), caption: [Second]),
-  ),
-  caption: [Two figures],
-) <fig:two>
-```
-
-### Cross references
-
-Write `@label` to make a reference. The name is German: `@chap:intro` gives
-"Kapitel 1", `@sec:method` gives "Abschnitt 1.2", `@fig:two` gives
+**References.** `@label` gives the German name: "Kapitel 1", "Abschnitt 1.2",
 "Abbildung 1.1".
 
-### Word count
+**Other.** `#unnumbered(level: 3)[...]` makes a heading without a number.
+`#compact-list[...]` removes the space between list items. `#word-count()`
+counts the words of the document.
 
-`#word-count()` gives the number of words in the body. Use it on the title
-page:
-
-```typ
-data-line("Wortanzahl", [#word-count() Wörter]),
-```
-
-### Watermark
-
-Set `watermark: "ENTWURF"` to print a light diagonal texture on every page.
-
-## Building the document
-
-With Nix:
+## Repository
 
 ```sh
-nix develop          # shell with typst, tinymist and make
-make                 # build build/main.pdf
-make watch           # rebuild on every change
-nix build            # build the PDF into ./result
+src/         # the template
+example/     # the example document, also the start point of `typst init`
+tools/       # script that normalizes the font name tables
 ```
 
-Without Nix:
+Build the example:
 
 ```sh
-typst compile --root . --font-path hsrtreport/assets/fonts src/main.typ build/main.pdf
-typst watch   --root . --font-path hsrtreport/assets/fonts src/main.typ build/main.pdf
+nix run .#install   # link the repository as @preview/hsrtreport:1.0.0
+nix run .#build     # write build/main.pdf
+nix run .#watch     # rebuild on every change
+nix develop         # shell with typst and tinymist
 ```
 
-`--root .` is necessary, because the document reads the template and the assets
-from the directory above `src/`.
-
-For an editor, use [tinymist](https://github.com/Myriad-Dreamin/tinymist). The
-settings in `.vscode/settings.json` and `.zed/settings.json` set the root and
-the font path for you.
-
-## Use as a Typst package
-
-`typst.toml` declares the repository as a Typst package and as a template.
-Install it as a local package to use it from any directory:
-
-```sh
-make install        # links the repository into the local package directory
-```
-
-Then start a new document from the template:
-
-```sh
-typst init @local/hsrtreport:1.0.0 my-report
-cd my-report
-make                # builds build/main.pdf
-```
-
-`typst init` copies the files of `template/` and nothing else. The document
-imports the template with `#import "@local/hsrtreport:1.0.0": *`, so it needs
-no copy of `hsrtreport/`.
-
-Typst does not load fonts from a package. The font path must therefore point
-into the installed template. The `Makefile` of the starter does this for you:
-
-```sh
-typst compile \
-  --font-path "$HOME/.local/share/typst/packages/local/hsrtreport/1.0.0/hsrtreport/assets/fonts" \
-  main.typ build/main.pdf
-```
-
-`make uninstall` removes the link again. If the package is published to Typst
-Universe, replace `@local` with `@preview` in `template/`.
-
-## Fonts
-
-The template uses two typefaces:
-
-- **Blender** for headings, the running head and the footer.
-- **DIN** for the body text.
-
-Both are part of the repository, in `hsrtreport/assets/fonts/`. Typst selects a
-face by family, weight and style. The vendor files declare one family per file
-("Blender-Bold", "DIN Medium"), so Typst cannot find a bold or an italic in
-such a set. `tools/patch-fonts.py` rewrites the name tables and the OS/2 tables,
-so that all faces of a typeface become one family. The repository contains the
-corrected files. Run `make fonts` again only after you replace a vendor file.
-
-## Differences from the LaTeX template
+## Differences from the LaTeX class
 
 | Item | LaTeX | Typst |
 | --- | --- | --- |
-| Icons of the info boxes | FontAwesome glyphs | Drawn with vector primitives |
-| Word count | `texcount` through shell escape | Counted in the document |
-| Glossary | `glossaries` package | Part of the template |
-| Bibliography | BibLaTeX with BibTeX backend | Typst bibliography, IEEE style |
-| Listings | `listings` package | Typst `raw` blocks |
+| Icons of the info boxes | FontAwesome | Drawn in the template |
+| Word count | `texcount` | Counted in the document |
+| Glossary | `glossaries` | Part of the template |
+| Bibliography | BibLaTeX | Typst bibliography |
 | Long code lines | Broken at the frame | Not broken |
-| Space between two headings that follow each other | Small | Larger, because Typst has no `\addvspace` |
-| Watermark | Not in the text layer | In the text layer |
-
-The colors of the info boxes come from the Typst palette (`blue`, `red`,
-`green`, `orange`), which is less saturated than the LaTeX palette.
+| Space between two headings | Small | Larger, Typst has no `\addvspace` |
 
 ## License
 
-Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0). See
+Creative Commons Attribution-ShareAlike 4.0 International. See
 [LICENSE](LICENSE).
 
 The class is a modified version of the ZHAWReport class by Martin Oswald
-(Zurich University of Applied Sciences). The logos and the fonts are property
-of Reutlingen University and of their respective owners.
+(ZHAW). The logos and the fonts belong to Reutlingen University and to their
+owners.

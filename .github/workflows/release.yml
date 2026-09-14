@@ -49,7 +49,11 @@ jobs:
           echo "TAG=$TAG" >> "$GITHUB_OUTPUT"
 
       - name: Build document
-        run: make build
+        run: |
+          # The example imports the package, so link the checkout as @preview.
+          mkdir -p "$HOME/.local/share/typst/packages/preview/hsrtreport"
+          ln -sfn "$PWD" "$HOME/.local/share/typst/packages/preview/hsrtreport/1.0.0"
+          typst compile --font-path src/assets/fonts example/main.typ build/main.pdf
 
       - name: Name the PDF after the tag
         run: cp build/main.pdf "Report_${{ steps.version.outputs.TAG }}.pdf"

@@ -1,26 +1,25 @@
 [package]
 name = "hsrtreport"
 version = "1.0.0"
-entrypoint = "hsrtreport/lib.typ"
+entrypoint = "src/lib.typ"
 authors = ["Frederik Beimgraben"]
 license = "CC-BY-SA-4.0"
 description = "Report template of the Faculty of Informatics, Reutlingen University"
 repository = "https://github.com/frederikbeimgraben/hsrtreport-typst"
 categories = ["paper", "thesis"]
 disciplines = ["computer-science", "engineering"]
+compiler = "0.15.0"
 exclude = [
-  "src",
   "build",
   "tools",
   ".github",
   ".vscode",
   ".zed",
-  "Makefile",
   "flake.nix",
   "flake.lock",
 ]
 
 [template]
-path = "template"
+path = "example"
 entrypoint = "main.typ"
 thumbnail = "thumbnail.png"

@@ -1,6 +1,6 @@
 // Main document file.
 
-#import "@local/hsrtreport:1.0.0": *
+#import "@preview/hsrtreport:1.0.0": *
 #import "metadata.typ"
 #import "glossary.typ"
 
@@ -11,4 +11,4 @@
   bib: bibliography("main.bib", style: "ieee", title: none),
 )
 
-#include "chapters/01_einleitung.typ"
+#include "chapters/01_template_demo.typ"

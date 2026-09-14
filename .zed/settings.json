@@ -11,7 +11,7 @@
   "lsp": {
     "tinymist": {
       "settings": {
-        "fontPaths": ["hsrtreport/assets/fonts"],
+        "fontPaths": ["src/assets/fonts"],
         "outputPath": "$root/build/$name",
         "exportPdf": "onSave",
         "formatterMode": "typstyle"
