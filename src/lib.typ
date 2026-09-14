@@ -239,11 +239,9 @@
     margin: margin,
     credit-url: credit-url,
     font-size: font-size,
-    // The title page shows the skyline and the watermark, but no footer logos.
-    background: page-background(
-      paper-width: paper-width,
-      watermark: watermark,
-    ),
+    // The title page keeps the skyline and the watermark. Its footer, and
+    // with it the footer logos, stays empty.
+    background: page-background(paper-width: paper-width, watermark: watermark),
   )
 
   if show-toc { toc() }
@@ -255,7 +253,12 @@
   pagebreak(weak: true)
   counter(page).update(1)
   numbered-body.update(true)
-  set page(footer: page-footer(author: author, numbering: "1"))
+  set page(footer: page-footer(
+    author: author,
+    numbering: "1",
+    logos: footer-logos,
+    logos-scale: logos-scale,
+  ))
 
   body
 

@@ -43,38 +43,30 @@
   ))
 }
 
-#let footer(author: none, numbering: "1") = context {
+// The logos sit in the footer row, not on the page behind it. The row then
+// keeps one center line for the author, the page number and the logos.
+#let footer(author: none, numbering: "1", logos: (), logos-scale: 1.0) = context {
   let page-number = counter(page).get().at(0, default: 0)
   let total = counter(page).final().at(0, default: 0)
   _head-foot(grid(
     columns: (1fr, auto, 1fr),
-    align: (left, center, right),
+    align: (left + horizon, center + horizon, right + horizon),
     author,
     if numbered-body.get() {
       [Seite~#std.numbering(numbering, page-number)~von~#std.numbering(numbering, total)]
     } else {
       [Seite~#std.numbering(numbering, page-number)]
     },
-    [],
+    if logos.len() > 0 {
+      // The logo row ends 0.3cm inside the right margin, as in the LaTeX class.
+      pad(right: 0.3cm, logos-module.footer-logos(logos, scale: logos-scale))
+    },
   ))
 }
 
-#let background(
-  paper-width: 210mm,
-  logos: (),
-  logos-scale: 1.0,
-  watermark: none,
-) = {
+#let background(paper-width: 210mm, watermark: none) = {
   watermark-layer(watermark)
   logos-module.skyline(paper-width)
-  if logos.len() > 0 {
-    place(
-      bottom + right,
-      dx: -2.3cm,
-      dy: -1.5em - 2pt,
-      logos-module.footer-logos(logos, scale: logos-scale),
-    )
-  }
 }
 
 #let page-setup(
@@ -93,16 +85,16 @@
     paper: paper,
     margin: margin,
     header-ascent: 21.7pt,
-    footer-descent: 8.3pt,
+    footer-descent: 5.9pt,
     numbering: none,
     header: header(title: title),
-    footer: footer(author: author, numbering: page-numbering),
-    background: background(
-      paper-width: paper-width,
+    footer: footer(
+      author: author,
+      numbering: page-numbering,
       logos: logos,
       logos-scale: logos-scale,
-      watermark: watermark,
     ),
+    background: background(paper-width: paper-width, watermark: watermark),
   )
   body
 }
