@@ -16,6 +16,7 @@ graphic. It needs no LaTeX installation and no package downloads.
 - [Template options](#template-options)
 - [Features](#features)
 - [Building the document](#building-the-document)
+- [Use as a Typst package](#use-as-a-typst-package)
 - [Fonts](#fonts)
 - [Differences from the LaTeX template](#differences-from-the-latex-template)
 - [License](#license)
@@ -44,13 +45,15 @@ hsrtreport-typst/
 │   ├── pages/              # Title page, table of contents, glossary
 │   └── assets/             # Fonts and images
 │
-├── src/                    # The document
+├── src/                    # The example document, shows all features
 │   ├── main.typ            # Entry point of the document
 │   ├── metadata.typ        # Title page data, logos and options
 │   ├── glossary.typ        # Glossary and acronym definitions
 │   ├── main.bib            # Bibliography
 │   └── chapters/           # Your chapters
 │
+├── template/               # Starter that `typst init` copies
+├── thumbnail.png           # First page, for the package listing
 ├── tools/patch-fonts.py    # Normalizes the name tables of the fonts
 ├── flake.nix               # Nix development shell and document build
 ├── Makefile                # Build directives
@@ -250,6 +253,39 @@ from the directory above `src/`.
 For an editor, use [tinymist](https://github.com/Myriad-Dreamin/tinymist). The
 settings in `.vscode/settings.json` and `.zed/settings.json` set the root and
 the font path for you.
+
+## Use as a Typst package
+
+`typst.toml` declares the repository as a Typst package and as a template.
+Install it as a local package to use it from any directory:
+
+```sh
+make install        # links the repository into the local package directory
+```
+
+Then start a new document from the template:
+
+```sh
+typst init @local/hsrtreport:1.0.0 my-report
+cd my-report
+make                # builds build/main.pdf
+```
+
+`typst init` copies the files of `template/` and nothing else. The document
+imports the template with `#import "@local/hsrtreport:1.0.0": *`, so it needs
+no copy of `hsrtreport/`.
+
+Typst does not load fonts from a package. The font path must therefore point
+into the installed template. The `Makefile` of the starter does this for you:
+
+```sh
+typst compile \
+  --font-path "$HOME/.local/share/typst/packages/local/hsrtreport/1.0.0/hsrtreport/assets/fonts" \
+  main.typ build/main.pdf
+```
+
+`make uninstall` removes the link again. If the package is published to Typst
+Universe, replace `@local` with `@preview` in `template/`.
 
 ## Fonts
 
