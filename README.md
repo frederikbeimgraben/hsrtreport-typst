@@ -141,9 +141,17 @@ nix develop         # shell with typst and tinymist
 
 ## License
 
-Creative Commons Attribution-ShareAlike 4.0 International. See
-[LICENSE](LICENSE).
+| Files | License |
+| --- | --- |
+| `src/*.typ`, `src/**/*.typ` | CC BY-SA 4.0, see [LICENSE](LICENSE) |
+| `example/` | MIT-0, see [LICENSE-MIT-0](LICENSE-MIT-0) |
+| `src/assets/fonts/`, `src/assets/images/` | Not covered, see below |
 
-The class is a modified version of the ZHAWReport class by Martin Oswald
-(ZHAW). The logos and the fonts belong to Reutlingen University and to their
-owners.
+The template is a modified version of the ZHAWReport class by Martin Oswald
+(ZHAW). Your own document, written from `example/`, carries no condition from
+this repository.
+
+The fonts Blender and DIN and the logos of Reutlingen University are **not**
+covered by the licenses above. They belong to their owners. The corporate
+design of Reutlingen University states the terms for the logos. Use them only
+for work at Reutlingen University.
