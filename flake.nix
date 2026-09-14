@@ -50,11 +50,13 @@
 
           # Compile the example document.
           build = app "build" ''
+            mkdir -p build
             typst compile --font-path ${fonts} example/main.typ build/main.pdf
           '';
 
           # Compile the example document on every change.
           watch = app "watch" ''
+            mkdir -p build
             typst watch --font-path ${fonts} example/main.typ build/main.pdf
           '';
 
@@ -90,6 +92,7 @@
               name = "thumbnail";
               runtimeInputs = [ pkgs.typst pkgs.poppler-utils ];
               text = ''
+                mkdir -p build
                 typst compile --font-path ${fonts} example/main.typ build/main.pdf
                 pdftoppm -r 150 -png -f 1 -l 1 -singlefile build/main.pdf thumbnail
               '';

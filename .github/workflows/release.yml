@@ -53,6 +53,7 @@ jobs:
           # The example imports the package, so link the checkout as @local.
           mkdir -p "$HOME/.local/share/typst/packages/local/hsrtreport"
           ln -sfn "$PWD" "$HOME/.local/share/typst/packages/local/hsrtreport/1.0.0"
+          mkdir -p build
           typst compile --font-path src/assets/fonts example/main.typ build/main.pdf
 
       - name: Name the PDF after the tag
