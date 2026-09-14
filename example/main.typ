@@ -1,6 +1,6 @@
 // Main document file.
 
-#import "@preview/hsrtreport:1.0.0": *
+#import "@local/hsrtreport:1.0.0": *
 #import "metadata.typ"
 #import "glossary.typ"
 

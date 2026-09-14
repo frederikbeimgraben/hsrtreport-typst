@@ -4,12 +4,33 @@ Typst report template for academic work at Reutlingen University. It is the
 port of the [HSRTReport LaTeX class](https://github.com/frederikbeimgraben/HSRT-Report)
 and keeps the same layout.
 
+## Install
+
+Run the two commands one time:
+
+```sh
+nix run github:frederikbeimgraben/hsrtreport-typst#install         # the template
+nix run github:frederikbeimgraben/hsrtreport-typst#install-fonts   # Blender and DIN
+```
+
+The first command makes `@local/hsrtreport:1.0.0` available to Typst. The
+second command copies the fonts into `~/.local/share/fonts`, because Typst does
+not load fonts from a package. After this, `typst compile report.typ` needs no
+flag.
+
+Without Nix, clone the repository and do the same by hand:
+
+```sh
+ln -s "$PWD" ~/.local/share/typst/packages/local/hsrtreport/1.0.0
+cp src/assets/fonts/*/*.ttf ~/.local/share/fonts/ && fc-cache -f
+```
+
 ## Use the template
 
 One import and one show rule make a complete document:
 
 ```typ
-#import "@preview/hsrtreport:1.0.0": *
+#import "@local/hsrtreport:1.0.0": *
 
 #show: hsrtreport.with(
   title: [Titel der Arbeit],
@@ -35,21 +56,10 @@ title page.
 To start from the example document instead, run:
 
 ```sh
-typst init @preview/hsrtreport:1.0.0 my-report
+typst init @local/hsrtreport:1.0.0 my-report
 ```
 
-## Install the fonts
-
-The template uses the fonts Blender and DIN. Typst does not load fonts from a
-package, so you must install them one time:
-
-```sh
-nix run github:frederikbeimgraben/hsrtreport-typst#install-fonts
-```
-
-The command copies the fonts into `~/.local/share/fonts`. Without Nix, copy
-the files from `src/assets/fonts/` there yourself. You can also give the
-directory to Typst with `--font-path`.
+## Fonts
 
 The name tables of the files in `src/assets/fonts/` carry a correction. The
 vendor files declare one family per file, for example "Blender-Bold". Typst
@@ -126,11 +136,15 @@ example/     # the example document, also the start point of `typst init`
 Build the example:
 
 ```sh
-nix run .#install   # link the repository as @preview/hsrtreport:1.0.0
+nix run .#install   # link the working tree as @local/hsrtreport:1.0.0
 nix run .#build     # write build/main.pdf
 nix run .#watch     # rebuild on every change
 nix develop         # shell with typst and tinymist
 ```
+
+The package is not on Typst Universe. It bundles the fonts and the logos of
+Reutlingen University, and Typst Universe takes third-party assets only with a
+policy of the owner that clears the distribution.
 
 ## Differences from the LaTeX class
 

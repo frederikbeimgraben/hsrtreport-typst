@@ -10,7 +10,7 @@
       pkgsFor = system: nixpkgs.legacyPackages.${system};
 
       fonts = "src/assets/fonts";
-      packageDir = "$HOME/.local/share/typst/packages/preview/hsrtreport/1.0.0";
+      packageDir = "$HOME/.local/share/typst/packages/local/hsrtreport/1.0.0";
     in
     {
       packages = forAllSystems (system:
@@ -58,22 +58,24 @@
             typst watch --font-path ${fonts} example/main.typ build/main.pdf
           '';
 
-          # Link the repository into the local Typst package directory, so that
-          # `typst init @local/hsrtreport:1.0.0` and `@local` imports work.
+          # Link the template into the Typst package directory, so that
+          # `@local/hsrtreport:1.0.0` resolves. Inside a clone it links the
+          # working tree, from GitHub it links this revision.
           install = app "install" ''
+            source="${self}"
+            if [ -f "$PWD/typst.toml" ] && grep -q 'name = "hsrtreport"' "$PWD/typst.toml"; then
+              source="$PWD"
+            fi
             mkdir -p "$(dirname "${packageDir}")"
-            ln -sfn "$PWD" "${packageDir}"
-            echo "linked ${packageDir} -> $PWD"
+            ln -sfn "$source" "${packageDir}"
+            echo "linked ${packageDir} -> $source"
           '';
 
           # Copy the template fonts into the font directory of the user. After
           # this, typst finds them without --font-path.
           install-fonts = app "install-fonts" ''
             target="$HOME/.local/share/fonts/hsrtreport"
-            source="${fonts}"
-            if [ ! -d "$source" ]; then
-              source="${packageDir}/${fonts}"
-            fi
+            source="${self}/${fonts}"
             mkdir -p "$target"
             cp "$source"/*/*.ttf "$target"/
             if command -v fc-cache > /dev/null; then fc-cache -f "$target"; fi

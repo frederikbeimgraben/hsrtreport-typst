@@ -44,9 +44,9 @@ jobs:
 
       - name: Build document
         run: |
-          # The example imports the package, so link the checkout as @preview.
-          mkdir -p "$HOME/.local/share/typst/packages/preview/hsrtreport"
-          ln -sfn "$PWD" "$HOME/.local/share/typst/packages/preview/hsrtreport/1.0.0"
+          # The example imports the package, so link the checkout as @local.
+          mkdir -p "$HOME/.local/share/typst/packages/local/hsrtreport"
+          ln -sfn "$PWD" "$HOME/.local/share/typst/packages/local/hsrtreport/1.0.0"
           typst compile --font-path src/assets/fonts example/main.typ build/main.pdf
 
       - name: Verify PDF creation
