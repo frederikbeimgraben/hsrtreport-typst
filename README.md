@@ -51,6 +51,11 @@ The command copies the fonts into `~/.local/share/fonts`. Without Nix, copy
 the files from `src/assets/fonts/` there yourself. You can also give the
 directory to Typst with `--font-path`.
 
+The name tables of the files in `src/assets/fonts/` carry a correction. The
+vendor files declare one family per file, for example "Blender-Bold". Typst
+selects a face by family, weight and style, so it cannot find a bold or an
+italic in such a set. The files here declare one family per typeface.
+
 ## Options
 
 | Option | Default | Function |
@@ -116,7 +121,6 @@ counts the words of the document.
 ```sh
 src/         # the template
 example/     # the example document, also the start point of `typst init`
-tools/       # script that normalizes the font name tables
 ```
 
 Build the example:

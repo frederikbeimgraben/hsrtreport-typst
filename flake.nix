@@ -93,16 +93,6 @@
               '';
             }}/bin/thumbnail";
           };
-
-          # Normalize the name tables of the bundled fonts.
-          patch-fonts = {
-            type = "app";
-            program = "${pkgs.writeShellApplication {
-              name = "patch-fonts";
-              runtimeInputs = [ (pkgs.python3.withPackages (ps: [ ps.fonttools ])) ];
-              text = ''python3 tools/patch-fonts.py ${fonts}'';
-            }}/bin/patch-fonts";
-          };
         });
 
       devShells = forAllSystems (system:
