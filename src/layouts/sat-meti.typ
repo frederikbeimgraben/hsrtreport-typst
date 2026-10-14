@@ -19,7 +19,7 @@
   h2: 14pt,
   h3: 12pt,
   lists: 10pt,
-  header: 12pt,
+  header: 10pt,
   footer: 10pt,
   footnote: 10pt,
   abstract: 10pt,
@@ -169,9 +169,11 @@
   if before.len() > 0 { before.last() } else { none }
 }
 
+// Three centered lines in the paragraph style "Kopfzeile" of the Word template:
+// 10pt, 6pt below each line, no hyphenation.
 #let _header(title, labels) = context {
-  set text(size: sat-sizes.header)
-  set par(justify: false, spacing: _leading, leading: _leading)
+  set text(size: sat-sizes.header, hyphenate: false)
+  set par(justify: false, spacing: _leading + _par-space, leading: _leading)
   set align(center)
   let chapter = _chapter()
   let chapter-line = if chapter == none { [~] } else {
@@ -190,28 +192,41 @@
     let ends = query(<hsrt-sat-end>)
     if ends.len() > 0 { ends.first().location().page() } else { here().page() }
   }
-  grid(
-    columns: (1fr, auto),
-    align: (left, right),
-    if footer-id != none { footer-id },
+  // The Word template centers the footer ID on a tab at the middle of the
+  // text block and puts the page number at the right margin.
+  block(width: 100%, {
+    align(center, if footer-id != none { footer-id } else { [~] })
     if numbered {
       let number = counter(page).get().first()
-      [#labels.page #number #labels.page-of #total]
-    },
-  )
+      place(right + horizon, [#labels.page #number #labels.page-of #total])
+    }
+  })
 }
 
 // ---------------------------------------------------------------------------
 // Lists of contents, figures, tables, equations, acronyms and terms
 // ---------------------------------------------------------------------------
 
-#let _list-heading(title) = heading(level: 1, numbering: none, outlined: false, title)
+// The lists follow each other without a page break, as in the Word template.
+// The supplement marks them for the page break rule of level-1 headings.
+#let _list-marker = [sat-list]
+#let _list-heading(title) = heading(
+  level: 1,
+  numbering: none,
+  outlined: false,
+  supplement: _list-marker,
+  title,
+)
 
 // The dots between the entry and its page number.
 #let _dots = box(width: 1fr, repeat(gap: 0.2em)[.])
 
 #let _toc(title, depth: 3) = {
-  _list-heading(title)
+  // Word sets the title of the contents in the theme color accent1, shade BF.
+  {
+    show heading: set text(fill: rgb("#365f91"))
+    _list-heading(title)
+  }
   set text(size: sat-sizes.lists)
   show outline.entry: it => {
     let level = it.level
@@ -293,7 +308,7 @@
   for key in entries.keys().sorted() {
     let entry = entries.at(key)
     rows.push([#entry.at("short", default: key)#entry-label(key)])
-    rows.push([--])
+    rows.push([\-\-])
     rows.push(entry.at("long", default: []))
   }
   _plain-table((3.25cm, 2.03cm, 1fr), rows)
@@ -421,6 +436,8 @@
 
 #let _abstract-page(abstract: none, keywords: none, keywords-en: none, labels: sat-labels) = {
   set text(font: sat-serif, style: "italic", size: sat-sizes.abstract)
+  // The style "Abstract" reaches 1.5cm into the left and 1cm into the right margin.
+  show: pad.with(left: -1.5cm, right: -1cm)
   if abstract != none { par[*#labels.abstract* #abstract] }
   if keywords-en != none { par[*#labels.keywords-en* #_join(keywords-en)] }
   if keywords != none { par[*#labels.keywords* #_join(keywords)] }
@@ -535,7 +552,7 @@
   // Each level-1 heading starts a new page, also the lists in the front
   // matter. Figures and tables count again from 1 in each chapter.
   show heading.where(level: 1): it => {
-    pagebreak(weak: true)
+    if it.supplement != _list-marker or it.body == [#labels.toc] { pagebreak(weak: true) }
     counter(figure.where(kind: image)).update(0)
     counter(figure.where(kind: table)).update(0)
     counter(figure.where(kind: raw)).update(0)
