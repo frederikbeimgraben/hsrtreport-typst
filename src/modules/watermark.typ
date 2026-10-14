@@ -8,7 +8,7 @@
 #let watermark-layer(
   body,
   fill: luma(90%),
-  size: 24pt,
+  size: 8pt,
   font: heading-font,
   angle: 45deg,
   extent: 60cm,
