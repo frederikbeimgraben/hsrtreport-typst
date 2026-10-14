@@ -167,6 +167,7 @@ one option:
 | `layout` | `"default"` | `"default"` or `"sat-meti"` |
 | `keywords-en` | `none` | English keywords on page 2, a string or an array |
 | `footer-id` | `none` | Left part of the footer |
+| `word-count` | `none` | Word count on the title page. `none` prints the count of the template |
 | `sat-labels` | `(:)` | Replace fixed texts, see `sat-labels` in `src/layouts/sat-meti.typ` |
 
 The layout uses these fields: `title`, `author`, `email`, `semester-count`,
@@ -178,14 +179,16 @@ The layout does these steps:
 
 - Margins 4/3/3/2 cm. Libre Franklin 12pt for the text, TeX Gyre Termes
   italic for captions and the abstract. Justified text with hyphenation.
-- The title page is page 0. Page 2 of the file holds the abstract and the
-  keywords, without a page number. The first list page is page 1.
+- The title page is page 0 and has no header and no footer. Page 1 holds
+  the abstract and the keywords. The first list page is page 2.
 - It always prints six lists: contents (3 levels), figures, tables,
   equations, acronyms and glossary.
 - Each level-1 heading starts a new page. Level-4 headings have no number
   and stay out of the contents.
 - The word count on the title page starts at the first level-1 heading. It
-  stops before the heading "Literaturverzeichnis".
+  stops before the heading "Literaturverzeichnis". The template counts the
+  source text, so citations and glossary entries do not count. To print
+  the value that a linter measures in the PDF, set `word-count: 1234`.
 
 Write the bibliography and the declaration as chapters in the body:
 

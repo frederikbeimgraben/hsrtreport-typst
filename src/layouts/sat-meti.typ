@@ -359,6 +359,7 @@
   module: none,
   supervisor: none,
   semester: none,
+  word-count: none,
   labels: sat-labels,
 ) = page(header: none, footer: none, {
   counter(page).update(0)
@@ -379,9 +380,15 @@
     par("- " + labels.document-type + " -")
   })
 
-  // The title starts 6cm below the top margin, that is 9cm below the top
-  // edge of the page.
-  place(top + left, dy: 6cm, block(width: 100%, {
+  // The title follows in the flow, as in the Word template. Its top edge
+  // is at least 6cm below the top edge of the page. The lines above the
+  // title push it further down.
+  par[~]
+  context {
+    let top = here().position().y
+    if top < 6cm { v(6cm - top) }
+  }
+  block(width: 100%, {
     align(center, block(
       below: 15pt + _leading,
       text(size: sat-sizes.title, tracking: 0.25pt, hyphenate: false, title),
@@ -403,13 +410,13 @@
     rows.push(labels.submitted-on)
     rows.push(_date(submitted-on))
     rows.push(labels.word-count)
-    rows.push(context str(words-state.get()))
+    rows.push(if word-count != none { str(word-count) } else { context str(words-state.get()) })
     grid(
       columns: (4cm, 1fr),
       row-gutter: _leading + _par-space,
       ..rows,
     )
-  }))
+  })
 })
 
 #let _abstract-page(abstract: none, keywords: none, keywords-en: none, labels: sat-labels) = {
@@ -437,6 +444,7 @@
   keywords: none,
   keywords-en: none,
   footer-id: none,
+  word-count: none,
   created-on: none,
   terms: (:),
   acronyms: (:),
@@ -590,19 +598,19 @@
     module: module,
     supervisor: supervisor,
     semester: semester,
+    word-count: word-count,
     labels: labels,
   )
 
-  // Page 2 of the file: abstract and keywords. It belongs to the title
-  // sheet, so the first list page gets the number 1.
-  page(footer: _footer(footer-id, labels, numbered: false), _abstract-page(
+  // Page 1: abstract and keywords. The first list page is page 2, as in
+  // the Word template.
+  page(_abstract-page(
     abstract: abstract,
     keywords: keywords,
     keywords-en: keywords-en,
     labels: labels,
   ))
 
-  counter(page).update(1)
   _toc(labels.toc, depth: 3)
   _figure-list(labels.figures, image)
   _figure-list(labels.tables, table)

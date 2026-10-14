@@ -161,6 +161,9 @@
   layout: "default",
   keywords-en: none,
   footer-id: none,
+  // The layout "sat-meti" prints this number as the word count. With
+  // `none` it prints the count of the template.
+  word-count: none,
   sat-labels: (:),
   body,
 ) = {
@@ -179,6 +182,7 @@
       keywords: keywords,
       keywords-en: keywords-en,
       footer-id: footer-id,
+      word-count: word-count,
       created-on: created-on,
       terms: _normalize-terms(terms),
       acronyms: _normalize-acronyms(acronyms),

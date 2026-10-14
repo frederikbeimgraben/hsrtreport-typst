@@ -8,6 +8,8 @@
   email: "hans-maria.muster@student.hs-reutlingen.de",
   semester-count: "x",
   submitted-on: "12.12.2099",
+  // Word count from the linter. `none` prints the count of the template.
+  word-count: none,
   course: "Medizinisch-Technische Informatik",
   // The last item is the name of the seminar.
   module: ("MTIB6.4", "Ausgewählte Themen der Medizinisch-Technischen Informatik"),
