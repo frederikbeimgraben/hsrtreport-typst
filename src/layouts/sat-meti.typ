@@ -489,7 +489,7 @@
     numbering: none,
     header: _header(title, labels),
     footer: _footer(footer-id, labels),
-    background: watermark-layer(watermark),
+    background: watermark-layer(watermark, font: sat-sans),
   )
 
   // Body text: 12pt, justified, hyphenated, single line spacing, 6pt below
