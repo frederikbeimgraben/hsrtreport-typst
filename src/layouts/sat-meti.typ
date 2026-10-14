@@ -495,7 +495,8 @@
     linebreaks: "optimized",
   )
   // List items have no space between them ("Listenabsatz").
-  set list(spacing: _leading)
+  // Libre Franklin has no glyph for the default nested marker. Use an en dash on all levels.
+  set list(spacing: _leading, marker: [–])
   set enum(spacing: _leading)
   set std.terms(spacing: _leading)
   show raw: set text(font: ("DejaVu Sans Mono",))
