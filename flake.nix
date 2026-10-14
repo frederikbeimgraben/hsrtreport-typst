@@ -10,7 +10,7 @@
       pkgsFor = system: nixpkgs.legacyPackages.${system};
 
       fonts = "src/assets/fonts";
-      packageDir = "$HOME/.local/share/typst/packages/local/hsrtreport/1.0.0";
+      packageDir = "$HOME/.local/share/typst/packages/local/hsrtreport/1.1.0";
     in
     {
       packages = forAllSystems (system:
@@ -21,7 +21,7 @@
           # The example document, compiled to $out/main.pdf.
           example = pkgs.stdenvNoCC.mkDerivation {
             pname = "hsrtreport-example";
-            version = "1.0.0";
+            version = "1.1.0";
             src = self;
             nativeBuildInputs = [ pkgs.typst ];
             buildPhase = ''
@@ -54,6 +54,12 @@
             typst compile --font-path ${fonts} example/main.typ build/main.pdf
           '';
 
+          # Compile the example document of the layout "sat-meti".
+          build-sat = app "build-sat" ''
+            mkdir -p build
+            typst compile --font-path ${fonts} example-sat/main.typ build/main-sat.pdf
+          '';
+
           # Compile the example document on every change.
           watch = app "watch" ''
             mkdir -p build
@@ -61,7 +67,7 @@
           '';
 
           # Link the template into the Typst package directory, so that
-          # `@local/hsrtreport:1.0.0` resolves. Inside a clone it links the
+          # `@local/hsrtreport:1.1.0` resolves. Inside a clone it links the
           # working tree, from GitHub it links this revision.
           install = app "install" ''
             source="${self}"
@@ -79,7 +85,7 @@
             target="$HOME/.local/share/fonts/hsrtreport"
             source="${self}/${fonts}"
             mkdir -p "$target"
-            cp "$source"/*/*.ttf "$target"/
+            cp "$source"/*/*.ttf "$source"/*/*.otf "$target"/
             if command -v fc-cache > /dev/null; then fc-cache -f "$target"; fi
             echo "installed the template fonts into $target"
           '';
@@ -107,7 +113,7 @@
             packages = [ pkgs.typst pkgs.tinymist ];
             shellHook = ''
               echo "typst $(typst --version | cut -d' ' -f2)"
-              echo "nix run .#build | .#watch | .#install | .#install-fonts"
+              echo "nix run .#build | .#build-sat | .#watch | .#install | .#install-fonts"
             '';
           };
         });

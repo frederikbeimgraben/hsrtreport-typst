@@ -18,6 +18,7 @@
 #import "pages/titlepage.typ": data-line, titlepage
 #import "pages/toc.typ": *
 #import "pages/glossaries.typ": acronym-page, glossary-page
+#import "layouts/sat-meti.typ": declaration, declaration-text, formula, sat-count-words, sat-labels, sat-meti
 
 // Labels of the title page table.
 #let default-labels = (
@@ -155,8 +156,43 @@
   font-size: sizes.normal,
   lang: "de",
   credit-url: "https://github.com/frederikbeimgraben/hsrtreport-typst",
+  // Layout: "default" or "sat-meti". The layout "sat-meti" ignores the
+  // options that only the default layout uses, for example the logos.
+  layout: "default",
+  keywords-en: none,
+  footer-id: none,
+  sat-labels: (:),
   body,
 ) = {
+  if layout == "sat-meti" {
+    return sat-meti(
+      title: title,
+      author: author,
+      email: email,
+      semester-count: semester-count,
+      submitted-on: submitted-on,
+      course: course,
+      module: module,
+      supervisor: supervisor,
+      semester: semester,
+      abstract: abstract,
+      keywords: keywords,
+      keywords-en: keywords-en,
+      footer-id: footer-id,
+      created-on: created-on,
+      terms: _normalize-terms(terms),
+      acronyms: _normalize-acronyms(acronyms),
+      bib: bib,
+      watermark: watermark,
+      lang: lang,
+      labels: sat-labels,
+      body,
+    )
+  }
+  if layout != "default" {
+    panic("unknown layout " + repr(layout) + ": use \"default\" or \"sat-meti\"")
+  }
+
   let logos = _normalize-logos(logos, title-logo-names(variant))
   let footer-logos = if footer-logos == false {
     ()

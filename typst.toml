@@ -1,6 +1,6 @@
 [package]
 name = "hsrtreport"
-version = "1.0.0"
+version = "1.1.0"
 entrypoint = "src/lib.typ"
 authors = ["Frederik Beimgraben"]
 license = "CC-BY-SA-4.0 AND MIT-0"
