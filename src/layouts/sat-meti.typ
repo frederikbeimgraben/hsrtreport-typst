@@ -222,11 +222,9 @@
 #let _dots = box(width: 1fr, repeat(gap: 0.2em)[.])
 
 #let _toc(title, depth: 3) = {
-  // Word sets the title of the contents in the theme color accent1, shade BF.
-  {
-    show heading: set text(fill: rgb("#365f91"))
-    _list-heading(title)
-  }
+  // The Word template sets this title in a blue theme color. This layout uses
+  // the format of the other list titles on purpose.
+  _list-heading(title)
   set text(size: sat-sizes.lists)
   show outline.entry: it => {
     let level = it.level
