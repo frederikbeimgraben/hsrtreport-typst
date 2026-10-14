@@ -12,10 +12,10 @@ Run the two commands one time:
 
 ```sh
 nix run github:frederikbeimgraben/hsrtreport-typst#install         # the template
-nix run github:frederikbeimgraben/hsrtreport-typst#install-fonts   # Blender and DIN
+nix run github:frederikbeimgraben/hsrtreport-typst#install-fonts   # all template fonts
 ```
 
-The first command makes `@local/hsrtreport:1.0.0` available to Typst. The
+The first command makes `@local/hsrtreport:1.1.0` available to Typst. The
 second command copies the fonts into `~/.local/share/fonts`, because Typst does
 not load fonts from a package. After this, `typst compile report.typ` needs no
 flag.
@@ -23,8 +23,8 @@ flag.
 Without Nix, clone the repository and do the same by hand:
 
 ```sh
-ln -s "$PWD" ~/.local/share/typst/packages/local/hsrtreport/1.0.0
-cp src/assets/fonts/*/*.ttf ~/.local/share/fonts/ && fc-cache -f
+ln -s "$PWD" ~/.local/share/typst/packages/local/hsrtreport/1.1.0
+cp src/assets/fonts/*/*.ttf src/assets/fonts/*/*.otf ~/.local/share/fonts/ && fc-cache -f
 ```
 
 ## Use the template
@@ -32,7 +32,7 @@ cp src/assets/fonts/*/*.ttf ~/.local/share/fonts/ && fc-cache -f
 One import and one show rule make a complete document:
 
 ```typ
-#import "@local/hsrtreport:1.0.0": *
+#import "@local/hsrtreport:1.1.0": *
 
 #show: hsrtreport.with(
   title: [Titel der Arbeit],
@@ -58,7 +58,7 @@ title page.
 To start from the example document instead, run:
 
 ```sh
-typst init @local/hsrtreport:1.0.0 my-report
+typst init @local/hsrtreport:1.1.0 my-report
 ```
 
 ## Fonts
@@ -93,6 +93,7 @@ italic in such a set. The files here declare one family per typeface.
 | `chapter-pagebreak` | `false` | Start each chapter on a new page |
 | `line-stretch` | `1.0` | Line spacing, `1.5` gives the wide setting |
 | `paper`, `margin`, `font-size`, `lang` | A4, 2cm, 11pt, de | Page layout |
+| `layout` | `"default"` | Select the layout, see "Layout sat-meti" |
 
 ## Content
 
@@ -144,18 +145,93 @@ side by side and labels them (a), (b).
 `#compact-list[...]` removes the space between list items. `#word-count()`
 counts the words of the document.
 
+## Layout "sat-meti"
+
+The layout `"sat-meti"` sets the seminar paper (SAT) of the course meTI. It
+follows the Word template "Dokumentvorlage Seminararbeit" 7.4. Select it with
+one option:
+
+```typ
+#show: hsrtreport.with(
+  layout: "sat-meti",
+  title: [Titel der Arbeit],
+  footer-id: "MTIB6.3:SAT-W2026",
+  keywords: "Fünf, deutsche, Schlüsselwörter, durch, Kommas",
+  keywords-en: ("five", "English", "keywords", "as", "array"),
+  // the title page fields as above
+)
+```
+
+| Option | Default | Function |
+| --- | --- | --- |
+| `layout` | `"default"` | `"default"` or `"sat-meti"` |
+| `keywords-en` | `none` | English keywords on page 2, a string or an array |
+| `footer-id` | `none` | Left part of the footer |
+| `sat-labels` | `(:)` | Replace fixed texts, see `sat-labels` in `src/layouts/sat-meti.typ` |
+
+The layout uses these fields: `title`, `author`, `email`, `semester-count`,
+`submitted-on`, `course`, `module` (the last item is the seminar name),
+`supervisor`, `semester`, `abstract`, `keywords`, `terms`, `acronyms` and
+`watermark`. It ignores the logo options, `topic` and the `show-*` options.
+
+The layout does these steps:
+
+- Margins 4/3/3/2 cm. Libre Franklin 12pt for the text, TeX Gyre Termes
+  italic for captions and the abstract. Justified text with hyphenation.
+- The title page is page 0. Page 2 of the file holds the abstract and the
+  keywords, without a page number. The first list page is page 1.
+- It always prints six lists: contents (3 levels), figures, tables,
+  equations, acronyms and glossary.
+- Each level-1 heading starts a new page. Level-4 headings have no number
+  and stay out of the contents.
+- The word count on the title page starts at the first level-1 heading. It
+  stops before the heading "Literaturverzeichnis".
+
+Write the bibliography and the declaration as chapters in the body:
+
+```typ
+= Literaturverzeichnis
+#bibliography("main.bib", style: "apa-6th-edition.csl", title: none)
+
+= Danksagungen
+...
+
+= Eidesstattliche Erklärung
+#declaration()
+```
+
+**Equations.** Every block equation gets a number. To give an equation a
+title for the list of equations, use `formula`. Put the label inside:
+
+```typ
+#formula(title: [Polstellenberechnung])[
+  $ x = (-b plus.minus sqrt(b^2 - 4 a c)) / (2 a) $ <eq:pol>
+]
+```
+
+The caption below the equation reads "Formel 1 : Polstellenberechnung".
+`@eq:pol` gives "Formel 1".
+
+Compile with the template fonts:
+
+```sh
+typst compile --font-path src/assets/fonts example-sat/main.typ
+```
+
 ## Repository
 
 ```sh
 src/         # the template
 example/     # the example document, also the start point of `typst init`
+example-sat/ # the example document of the layout "sat-meti"
 ```
 
 Build the example:
 
 ```sh
-nix run .#install   # link the working tree as @local/hsrtreport:1.0.0
+nix run .#install   # link the working tree as @local/hsrtreport:1.1.0
 nix run .#build     # write build/main.pdf
+nix run .#build-sat # write build/main-sat.pdf
 nix run .#watch     # rebuild on every change
 nix develop         # shell with typst and tinymist
 ```
@@ -186,6 +262,10 @@ policy of the owner that clears the distribution.
 The template is a modified version of the ZHAWReport class by Martin Oswald
 (ZHAW). Your own document, written from `example/`, carries no condition from
 this repository.
+
+The fonts Libre Franklin (SIL Open Font License 1.1) and TeX Gyre Termes
+(GUST Font License) have their own licenses. The license files are next to
+the font files.
 
 The fonts Blender and DIN and the logos of Reutlingen University, of the
 student parliament and of its groups are **not** covered by the licenses
