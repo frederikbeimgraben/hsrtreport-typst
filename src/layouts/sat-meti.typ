@@ -587,6 +587,13 @@
     if element != none and element.func() == math.equation {
       let number = counter(math.equation).at(element.location()).first()
       link(element.location(), [#labels.equation~#number])
+    } else if element != none and element.func() == figure and element.numbering != none {
+      // The figure number has the chapter number of the figure, not of the
+      // reference. Read both counters at the location of the figure.
+      let location = element.location()
+      let chapter = counter(heading).at(location).at(0, default: 0)
+      let number = counter(figure.where(kind: element.kind)).at(location).first()
+      link(location, [#element.supplement~#numbering("1.1", chapter, number)])
     } else {
       it
     }
