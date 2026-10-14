@@ -377,6 +377,8 @@
 ) = page(header: none, footer: none, {
   counter(page).update(0)
   set par(justify: false, spacing: _leading + _par-space)
+  // The lines of the title page break between words, never inside a word.
+  set text(hyphenate: false)
   _title-logos()
 
   let seminar = if type(module) == array { module.last() } else { module }
