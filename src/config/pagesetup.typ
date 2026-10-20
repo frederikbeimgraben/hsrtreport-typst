@@ -11,13 +11,16 @@
 
 // The running head names the chapter that is open on the page. The front
 // matter and the back matter have no numbered chapter, so it stays empty
-// there, as \ifHSRTBackMatter does in the LaTeX class.
+// there, as \ifHSRTBackMatter does in the LaTeX class. Without page breaks
+// between chapters, several chapters can start on one page: the head then
+// names the first of them, as \rightmark does in LaTeX.
 #let _active-chapter() = {
   let page-number = here().page()
   let chapters = query(heading.where(level: 1))
     .filter(chapter => chapter.location().page() <= page-number)
   if chapters.len() == 0 { return none }
-  chapters.last()
+  let starting = chapters.filter(chapter => chapter.location().page() == page-number)
+  if starting.len() > 0 { starting.first() } else { chapters.last() }
 }
 
 #let _chapter-label() = {
