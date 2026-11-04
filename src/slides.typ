@@ -13,6 +13,7 @@
 #import "modules/logos.typ": footer-logo-names, title-logo-names
 #import "modules/listings.typ": listings
 #import "modules/watermark.typ": watermark-layer
+#import "modules/infoboxes.typ": box-scale
 
 // Font sizes of a slide. The steps keep the ratios of the report sizes.
 #let slide-sizes = (
@@ -358,6 +359,8 @@
 
   let background = _background(paper-width, watermark)
   _variant.update(variant)
+  // The info boxes grow with the body text, 18pt against the 11pt report.
+  box-scale.update(font-size / sizes.normal)
 
   set page(
     width: paper-width,

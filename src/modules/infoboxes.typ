@@ -15,6 +15,10 @@
 #let _inset-left = 10pt + 0.25cm
 #let _icon-center = (x: 6pt, y: 12pt)
 
+// Scale of the icon, the padding and the corner radius. The report keeps 1.0,
+// the slides scale the boxes with their larger body text.
+#let box-scale = state("hsrt-box-scale", 1.0)
+
 #let colored-box(
   icon: icons.info-circle,
   color: blue,
@@ -28,6 +32,9 @@
     let background = calc.min(5% + 7.5% * level, 100%)
     let foreground = calc.min(background + 20%, 100%)
     let fill = _tint(color, background)
+    let k = box-scale.get()
+    let inset-left = _inset-left * k
+    let icon-size = icon-size * k
 
     block(
       width: 100%,
@@ -35,13 +42,13 @@
       above: 2.24em,
       below: 1.31em,
       fill: fill,
-      radius: 5pt,
-      inset: (left: _inset-left, right: 10pt, y: 10pt),
+      radius: 5pt * k,
+      inset: (left: inset-left, right: 10pt * k, y: 10pt * k),
       {
         place(
           top + left,
-          dx: icon-offset.at(0) - _inset-left + _icon-center.x - icon-size / 2,
-          dy: icon-offset.at(1) + _icon-center.y - icon-size / 2,
+          dx: (icon-offset.at(0) + _icon-center.x) * k - inset-left - icon-size / 2,
+          dy: (icon-offset.at(1) + _icon-center.y) * k - icon-size / 2,
           icon(icon-size, _tint(color, foreground), white),
         )
         body
