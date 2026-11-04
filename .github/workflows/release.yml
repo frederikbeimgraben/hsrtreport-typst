@@ -55,16 +55,21 @@ jobs:
           ln -sfn "$PWD" "$HOME/.local/share/typst/packages/local/hsrtreport/1.0.0"
           mkdir -p build
           typst compile --font-path src/assets/fonts example/main.typ build/main.pdf
+          typst compile --font-path src/assets/fonts example-slides/main.typ build/slides.pdf
 
       - name: Name the PDF after the tag
-        run: cp build/main.pdf "Report_${{ steps.version.outputs.TAG }}.pdf"
+        run: |
+          cp build/main.pdf "Report_${{ steps.version.outputs.TAG }}.pdf"
+          cp build/slides.pdf "Slides_${{ steps.version.outputs.TAG }}.pdf"
 
       - name: Create the release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.version.outputs.TAG }}
           name: "HSRTReport ${{ steps.version.outputs.TAG }}"
-          files: Report_${{ steps.version.outputs.TAG }}.pdf
+          files: |
+            Report_${{ steps.version.outputs.TAG }}.pdf
+            Slides_${{ steps.version.outputs.TAG }}.pdf
           prerelease: ${{ github.event.inputs.is_prerelease == 'true' }}
           generate_release_notes: true
         env:

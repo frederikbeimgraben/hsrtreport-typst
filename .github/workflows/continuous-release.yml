@@ -47,6 +47,7 @@ jobs:
           ln -sfn "$PWD" "$HOME/.local/share/typst/packages/local/hsrtreport/1.0.0"
           mkdir -p build
           typst compile --font-path src/assets/fonts example/main.typ build/main.pdf
+          typst compile --font-path src/assets/fonts example-slides/main.typ build/slides.pdf
 
       - name: Verify PDF creation
         run: |
@@ -54,8 +55,13 @@ jobs:
             echo "::error::PDF was not created - build failed"
             exit 1
           fi
+          if [ ! -f build/slides.pdf ]; then
+            echo "::error::Slides PDF was not created - build failed"
+            exit 1
+          fi
           cp build/main.pdf Report_Latest.pdf
-          ls -lh Report_Latest.pdf
+          cp build/slides.pdf Slides_Latest.pdf
+          ls -lh Report_Latest.pdf Slides_Latest.pdf
 
       - name: Generate release notes
         run: |
@@ -78,13 +84,16 @@ jobs:
 
           ### 📦 Download Files
           - `Report_Latest.pdf` - the latest compiled document
+          - `Slides_Latest.pdf` - the latest compiled example presentation
           EOF
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: document
-          path: Report_Latest.pdf
+          path: |
+            Report_Latest.pdf
+            Slides_Latest.pdf
 
       - name: Create or update the Latest release
         if: github.event_name == 'push'
@@ -93,7 +102,9 @@ jobs:
           tag_name: latest
           name: "🔄 Latest Development Build"
           body_path: release_notes.md
-          files: Report_Latest.pdf
+          files: |
+            Report_Latest.pdf
+            Slides_Latest.pdf
           make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

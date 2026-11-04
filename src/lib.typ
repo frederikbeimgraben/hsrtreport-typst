@@ -18,6 +18,7 @@
 #import "pages/titlepage.typ": data-line, titlepage
 #import "pages/toc.typ": *
 #import "pages/glossaries.typ": acronym-page, glossary-page
+#import "slides.typ": cols, focus-slide, hsrtslides, only, outline-slide, slide, slide-sizes, uncover
 
 // Labels of the title page table.
 #let default-labels = (
