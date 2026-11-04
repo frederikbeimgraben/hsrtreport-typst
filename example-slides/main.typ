@@ -18,7 +18,7 @@
   watermark: none,
 )
 
-#outline-slide()
+#outline-slide(depth: 2)
 
 = Einleitung
 

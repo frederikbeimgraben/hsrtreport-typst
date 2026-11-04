@@ -176,15 +176,29 @@
   )
 }
 
-// The list of sections, on a slide of its own.
-#let outline-slide(title: [Inhalt]) = slide(title: title, {
-  context {
-    let sections = query(heading.where(level: 1, outlined: true))
-    set enum(numbering: "1.", spacing: 0.9em)
-    set text(size: slide-sizes.large)
-    enum(..sections.map(section => link(section.location(), section.body)))
-  }
-})
+// The list of sections, on a slide of its own, in the style of the table of
+// contents of the report: Blender, sections bold in the link color, slide
+// titles with dot leaders and the slide number. `depth: 2` adds the slides.
+#let outline-slide(title: [Inhalt], depth: 1) = {
+  pagebreak(weak: true)
+  heading(level: 2, outlined: false, bookmarked: false, title)
+
+  show outline.entry: it => link(
+    it.element.location(),
+    it.indented(it.prefix(), it.inner()),
+  )
+  show outline.entry.where(level: 1): set block(above: 0.75em)
+  show outline.entry.where(level: 1): set text(
+    size: slide-sizes.large,
+    weight: "bold",
+  )
+  show outline.entry.where(level: 1): set outline.entry(fill: none)
+  show outline.entry.where(level: 2): set block(above: 0.45em)
+  set outline.entry(fill: repeat(gap: 0.35em)[.])
+  set text(font: heading-font, fill: link-color)
+  set outline(indent: 1.5em)
+  outline(title: none, depth: depth)
+}
 
 // Content in columns, 1fr each unless `widths` says otherwise.
 #let cols(widths: auto, gutter: 1.2cm, ..cells) = {

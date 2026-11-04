@@ -182,7 +182,7 @@ and the logos.
 | `#slide(title: [...], steps: n)[...]` | A slide, repeated for `n` steps |
 | `#uncover(steps)[...]` | Show content on some steps, keep its space on the others |
 | `#only(steps)[...]` | Show content on some steps, take no space on the others |
-| `#outline-slide()` | Slide with the list of sections |
+| `#outline-slide(depth: 1)` | Contents slide in the style of the report ToC, `depth: 2` adds the slides |
 | `#focus-slide[...]` | Slide in the logo yellow, for one statement |
 | `#cols(a, b, widths: (2fr, 1fr))` | Content in columns |
 
