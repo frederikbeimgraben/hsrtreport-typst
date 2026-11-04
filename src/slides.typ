@@ -13,7 +13,7 @@
 #import "modules/logos.typ": footer-logo-names, title-logo-names
 #import "modules/listings.typ": listings
 #import "modules/watermark.typ": watermark-layer
-#import "modules/infoboxes.typ": box-scale
+#import "modules/infoboxes.typ": box-icon-y, box-scale
 
 // Font sizes of a slide. The steps keep the ratios of the report sizes.
 #let slide-sizes = (
@@ -361,6 +361,8 @@
   _variant.update(variant)
   // The info boxes grow with the body text, 18pt against the 11pt report.
   box-scale.update(font-size / sizes.normal)
+  // The icon sits on the middle of the first line of the box.
+  box-icon-y.update(font-size * body-span / 2)
 
   set page(
     width: paper-width,

@@ -19,6 +19,11 @@
 // the slides scale the boxes with their larger body text.
 #let box-scale = state("hsrt-box-scale", 1.0)
 
+// Height of the icon center below the top of the box content. `auto` keeps
+// the position of the LaTeX class. The slides center the icon on the first
+// line of text instead.
+#let box-icon-y = state("hsrt-box-icon-y", auto)
+
 #let colored-box(
   icon: icons.info-circle,
   color: blue,
@@ -35,6 +40,8 @@
     let k = box-scale.get()
     let inset-left = _inset-left * k
     let icon-size = icon-size * k
+    let icon-y = box-icon-y.get()
+    let icon-y = if icon-y == auto { _icon-center.y * k } else { icon-y.to-absolute() }
 
     block(
       width: 100%,
@@ -48,7 +55,7 @@
         place(
           top + left,
           dx: (icon-offset.at(0) + _icon-center.x) * k - inset-left - icon-size / 2,
-          dy: (icon-offset.at(1) + _icon-center.y) * k - icon-size / 2,
+          dy: icon-offset.at(1) * k + icon-y - icon-size / 2,
           icon(icon-size, _tint(color, foreground), white),
         )
         body
