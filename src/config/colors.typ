@@ -16,3 +16,13 @@
 #let light-gray = luma(80%)
 
 #let hsrt-yellow = rgb("#ffed00")
+
+// Fill of the focus slide per variant. A variant that is absent here takes
+// the yellow of the logos.
+#let stupa-gray = luma(35%)
+#let asta-pink = shocking-pink
+#let variant-accents = (
+  stupa: stupa-gray,
+  asta: asta-pink,
+)
+#let variant-accent(variant) = variant-accents.at(variant, default: hsrt-yellow)

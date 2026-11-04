@@ -158,22 +158,37 @@
   _step.update(1)
 }
 
-// A slide in the yellow of the logos, for one statement or a question.
-#let focus-slide(fill: hsrt-yellow, body) = {
+// The variant of the presentation, for the color of the focus slide.
+#let _variant = state("hsrt-slides-variant", "inf")
+
+// Black text on a light fill, white text on a dark fill.
+#let _text-on(fill) = {
+  let lightness = luma(fill).components().first()
+  if lightness < 60% { white } else { black }
+}
+
+// A slide in the accent color of the variant, for one statement or a
+// question: yellow for INF and HSRT, gray for STUPA, pink for AStA.
+// `fill` sets another color.
+#let focus-slide(fill: auto, body) = {
   pagebreak(weak: true)
-  page(
-    header: none,
-    footer: none,
-    background: none,
-    fill: fill,
-    align(center + horizon, text(
-      font: heading-font,
-      size: slide-sizes.section,
-      weight: "bold",
-      hyphenate: false,
-      body,
-    )),
-  )
+  context {
+    let fill = if fill == auto { variant-accent(_variant.get()) } else { fill }
+    page(
+      header: none,
+      footer: none,
+      background: none,
+      fill: fill,
+      align(center + horizon, text(
+        font: heading-font,
+        size: slide-sizes.section,
+        weight: "bold",
+        fill: _text-on(fill),
+        hyphenate: false,
+        body,
+      )),
+    )
+  }
 }
 
 // The list of sections, on a slide of its own, in the style of the table of
@@ -342,6 +357,7 @@
   set table(inset: 6pt)
 
   let background = _background(paper-width, watermark)
+  _variant.update(variant)
 
   set page(
     width: paper-width,

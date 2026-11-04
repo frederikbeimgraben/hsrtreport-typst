@@ -183,7 +183,7 @@ and the logos.
 | `#uncover(steps)[...]` | Show content on some steps, keep its space on the others |
 | `#only(steps)[...]` | Show content on some steps, take no space on the others |
 | `#outline-slide(depth: 1)` | Contents slide in the style of the report ToC, `depth: 2` adds the slides |
-| `#focus-slide[...]` | Slide in the logo yellow, for one statement |
+| `#focus-slide(fill: auto)[...]` | Slide for one statement, in the accent of the variant: yellow, gray for `stupa`, pink for `asta` |
 | `#cols(a, b, widths: (2fr, 1fr))` | Content in columns |
 
 `steps` is a number (`2`), a list (`(1, 3)`) or a range (`"2-"`, `"1-3"`).
