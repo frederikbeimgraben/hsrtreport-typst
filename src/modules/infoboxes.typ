@@ -6,6 +6,7 @@
 
 #import "icons.typ"
 #import "../config/colors.typ": *
+#import "../config/fonts.typ": body-span
 
 #let _level = counter("hsrt-colored-box-level")
 
@@ -14,6 +15,15 @@
 // Frame padding and where the icon sits relative to the left frame edge.
 #let _inset-left = 10pt + 0.25cm
 #let _icon-center = (x: 6pt, y: 12pt)
+
+// Scale of the icon, the padding and the corner radius. The report keeps 1.0,
+// the slides scale the boxes with their larger body text.
+#let box-scale = state("hsrt-box-scale", 1.0)
+
+// "hang": the icon hangs over the left edge of the frame, as in the LaTeX
+// class. "inline": the icon sits inside the frame, in a column of its own,
+// centered on the first line of text. The slides use "inline".
+#let box-layout = state("hsrt-box-layout", "hang")
 
 #let colored-box(
   icon: icons.info-circle,
@@ -28,6 +38,35 @@
     let background = calc.min(5% + 7.5% * level, 100%)
     let foreground = calc.min(background + 20%, 100%)
     let fill = _tint(color, background)
+    let k = box-scale.get()
+    let inset-left = _inset-left * k
+    let icon-size = icon-size * k
+    let icon-fill = _tint(color, foreground)
+
+    if box-layout.get() == "inline" {
+      // The first line of text is 1em times the span of DIN high. The icon
+      // is centered on it and may reach into the padding above.
+      let line-height = 1em.to-absolute() * body-span
+      return block(
+        width: 100%,
+        breakable: true,
+        above: 1.2em,
+        below: 1.2em,
+        fill: fill,
+        radius: 5pt * k,
+        inset: (x: 10pt * k, y: 10pt * k),
+        grid(
+          columns: (icon-size, 1fr),
+          column-gutter: 0.75em,
+          box(
+            width: icon-size,
+            height: line-height,
+            place(left + horizon, icon(icon-size, icon-fill, white)),
+          ),
+          body,
+        ),
+      )
+    }
 
     block(
       width: 100%,
@@ -35,14 +74,14 @@
       above: 2.24em,
       below: 1.31em,
       fill: fill,
-      radius: 5pt,
-      inset: (left: _inset-left, right: 10pt, y: 10pt),
+      radius: 5pt * k,
+      inset: (left: inset-left, right: 10pt * k, y: 10pt * k),
       {
         place(
           top + left,
-          dx: icon-offset.at(0) - _inset-left + _icon-center.x - icon-size / 2,
-          dy: icon-offset.at(1) + _icon-center.y - icon-size / 2,
-          icon(icon-size, _tint(color, foreground), white),
+          dx: (icon-offset.at(0) + _icon-center.x) * k - inset-left - icon-size / 2,
+          dy: (icon-offset.at(1) + _icon-center.y) * k - icon-size / 2,
+          icon(icon-size, icon-fill, white),
         )
         body
       },

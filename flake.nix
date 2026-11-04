@@ -52,6 +52,7 @@
           build = app "build" ''
             mkdir -p build
             typst compile --font-path ${fonts} example/main.typ build/main.pdf
+            typst compile --font-path ${fonts} example-slides/main.typ build/slides.pdf
           '';
 
           # Compile the example document on every change.

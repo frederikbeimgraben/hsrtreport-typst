@@ -144,18 +144,77 @@ side by side and labels them (a), (b).
 `#compact-list[...]` removes the space between list items. `#word-count()`
 counts the words of the document.
 
+## Slides
+
+The package also carries a presentation template, `hsrtslides`. It uses the
+fonts, the colors, the logos and the skyline of the report. The info boxes,
+the vote result and the code frames work on slides as well.
+
+```typ
+#import "@local/hsrtreport:1.0.0": *
+
+#show: hsrtslides.with(
+  title: [Titel des Vortrags],
+  subtitle: [Untertitel],
+  short-title: [Kurztitel],
+  author: "Hans Maria Muster",
+  date: "01.02.2026",
+  event: "Sitzung des Studierendenparlaments",
+  variant: "stupa",
+)
+
+#outline-slide()
+
+= Abschnitt
+
+== Titel der Folie
+- Punkt eins
+- Punkt zwei
+```
+
+A level 1 heading opens a section and gets a section slide. A level 2 heading
+opens a new slide and becomes its title. The head of a slide names the short
+title and the section, the foot names the author, the date, the slide number
+and the logos.
+
+| Function | Effect |
+| --- | --- |
+| `#slide(title: [...], steps: n)[...]` | A slide, repeated for `n` steps |
+| `#uncover(steps)[...]` | Show content on some steps, keep its space on the others |
+| `#only(steps)[...]` | Show content on some steps, take no space on the others |
+| `#outline-slide(depth: 1)` | Contents slide in the style of the report ToC, `depth: 2` adds the slides |
+| `#focus-slide(fill: auto)[...]` | Slide for one statement, in the accent of the variant: yellow, gray for `stupa`, pink for `asta` |
+| `#cols(a, b, widths: (2fr, 1fr))` | Content in columns |
+
+`steps` is a number (`2`), a list (`(1, 3)`) or a range (`"2-"`, `"1-3"`).
+
+| Option | Default | Function |
+| --- | --- | --- |
+| `title`, `subtitle` | — | Title slide and PDF metadata |
+| `short-title` | `auto` | Title in the head of each slide, the title by default |
+| `author`, `email`, `date`, `event`, `institution` | `none` | Rows of the title slide |
+| `extra-data` | `()` | More `(label, value)` rows for the title slide |
+| `show-title-slide` | `true` | Print the title slide |
+| `variant`, `logos`, `footer-logos`, `logos-scale` | as in the report | Logos |
+| `aspect-ratio` | `"16-9"` | `"16-9"` or `"4-3"` |
+| `font-size` | `18pt` | Body text size |
+| `watermark` | `none` | Watermark text |
+
+The example presentation is in `example-slides/`.
+
 ## Repository
 
 ```sh
-src/         # the template
-example/     # the example document, also the start point of `typst init`
+src/             # the template
+example/         # the example document, also the start point of `typst init`
+example-slides/  # the example presentation
 ```
 
 Build the example:
 
 ```sh
 nix run .#install   # link the working tree as @local/hsrtreport:1.0.0
-nix run .#build     # write build/main.pdf
+nix run .#build     # write build/main.pdf and build/slides.pdf
 nix run .#watch     # rebuild on every change
 nix develop         # shell with typst and tinymist
 ```
